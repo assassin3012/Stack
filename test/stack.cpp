@@ -35,11 +35,18 @@ stack<T> & stack<T>::operator = (stack<T> & st) {
 	return *this;
 }
 template <typename T>
-T stack<T>::pop() {
-	if (count_ == 0) {
-		throw std::logic_error("Empty");
+void stack<T>::pop() {
+	if (count_ != 0) {
+		--count_;
 	}
-	return array_[--count_];
+	else throw std::logic_error("Empty");
+}
+template <typename T>
+T& stack<T>::top() const {
+	if (count_ != 0) {
+		return array_[count_ - 1];
+	}
+	else throw logic_error("Empty");
 }
 template <typename T>
 void stack<T>::swap(stack & st) {
