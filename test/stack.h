@@ -1,4 +1,5 @@
-#pragma once
+#ifndef STACK_H
+#define STACK_H
 #include <iostream>
 #include "stack.cpp"
 
@@ -19,3 +20,4 @@ private:
    size_t count_;
    void swap(stack & st) noexcept;
 };
+#endif
