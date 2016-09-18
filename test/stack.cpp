@@ -10,7 +10,7 @@ template <typename T>
 stack<T>::~stack() { delete[] array_; }
 
 template <typename T>
-stack<T>::stack(const stack<T> & st) : array_size_(st.array_size_), count_(newcopy(st.array_, st.count_, st.array_size_)) {}
+stack<T>::stack(const stack<T> & st) : array_size_(st.array_size_), count_(st.count_), array_(newcopy(st.array_, st.count_, st.array_size_)) {}
 template <typename T>
 size_t stack<T>::count() const noexcept { return count_; }
 template <typename T>
