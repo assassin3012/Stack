@@ -14,6 +14,7 @@ public:
 	stack<T> & operator = (stack<T> & st);
 	void pop();
 	T& top() const;
+	T* newcopy(const T* st, const size_t new_count, const size_t new_size);
 private:
 	T * array_;
 	size_t array_size_;
