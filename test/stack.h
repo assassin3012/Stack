@@ -1,7 +1,7 @@
 #ifndef STACK_H
 #define STACK_H
 #include <iostream>
-#include "stack.cpp"
+
 
 template <typename T>
 class stack
@@ -20,4 +20,5 @@ private:
    size_t count_;
    void swap(stack & st) noexcept;
 };
+#include "stack.cpp"
 #endif
