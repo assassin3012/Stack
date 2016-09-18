@@ -24,11 +24,11 @@ SCENARIO("operator =","[=]"){
 SCENARIO("Stack push, top and pop #2", "[PTP#2]") {
 	stack<int> A;
 	int m=404;
-	for (int i=0, i<10, ++i){
+	for (int i=0; i<10; ++i){
 		A.push(m+i);
 	}
 	bool A=True;
-	for (int i=0, i<10, ++i){
+	for (int i=0; i<10; ++i){
 		if (A.count()!=10-i) { A=False;}
 		if (A.top!=m-i) { A=False; }
 		A.pop;
