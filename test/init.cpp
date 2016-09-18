@@ -2,6 +2,7 @@
 #include "stack.h"
 #include <iostream>
 #include <catch.hpp>
+
 SCENARIO("Stack init and count", "[init_count]"){
 	stack<bool> A;
 	REQUIRE(A.count() == 0);
@@ -18,7 +19,7 @@ SCENARIO("Stack push, top and pop", "[PTP]") {
 	A.pop();
 	REQUIRE(A.count() == 0);
 }
-SCENARIO("operator =","[=]"){
+SCENARIO("Stack operator =","[operator =]"){
 	stack<int> A;
 	A.push(221);
 	stack<int> B = A; 
