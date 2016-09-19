@@ -52,7 +52,7 @@ void stack<T>::swap(stack & st) {
 	std::swap(array_, st.array_);
 }
 template <typename T>
-T* stack<T>::newcopy(const T* st, const size_t new_count, const size_t new_size) {
+T* newcopy(const T* st, const size_t new_count, const size_t new_size) {
 	T* ar = new T[new_size];
 	if (new_count > 0) {
 		std::copy(st, st + new_count, ar);
