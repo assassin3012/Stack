@@ -25,4 +25,10 @@ SCENARIO("Stack operator =","[operator =]"){
 	stack<int> B = A; 
 	REQUIRE(B.count() == 1);
 	REQUIRE(B.top() == 221);
+stack<int> A1;
+stack<int> B1;
+	A1.push(221);
+	B1 = A1; 
+	REQUIRE(B.count() == 1);
+	REQUIRE(B.top() == 221);
 }
