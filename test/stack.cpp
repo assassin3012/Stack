@@ -5,6 +5,14 @@
 using namespace std;
 
 template <typename T>
+T* newcopy(const T* st, const size_t new_count, const size_t new_size) {
+	T* ar = new T[new_size];
+	if (new_count > 0) {
+		std::copy(st, st + new_count, ar);
+	}
+	return ar;
+}
+template <typename T>
 stack<T>::stack() : array_(nullptr), array_size_(0), count_(0) {}
 template <typename T>
 stack<T>::~stack() { delete[] array_; }
@@ -51,13 +59,6 @@ void stack<T>::swap(stack & st) {
 	std::swap(count_, st.count_);
 	std::swap(array_, st.array_);
 }
-template <typename T>
-T* newcopy(const T* st, const size_t new_count, const size_t new_size) {
-	T* ar = new T[new_size];
-	if (new_count > 0) {
-		std::copy(st, st + new_count, ar);
-	}
-	return ar;
-}
+
 #endif
  
