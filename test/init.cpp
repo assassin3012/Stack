@@ -3,9 +3,10 @@
 #include <iostream>
 #include <catch.hpp>
 
-SCENARIO("Stack init and count", "[init_count]"){
+SCENARIO("Stack init, count and empty", "[init_count]"){
 	stack<bool> A;
 	REQUIRE(A.count() == 0);
+	REQUIRE(A.empty());
 }
 SCENARIO("Stack push, top and pop", "[PTP]") {
 	stack<int> A;
@@ -17,7 +18,7 @@ SCENARIO("Stack push, top and pop", "[PTP]") {
 	REQUIRE(A.count() == 1);
 	REQUIRE(A.top() == 4);
 	A.pop();
-	REQUIRE(A.count() == 0);
+	REQUIRE(A.empty());
 }
 SCENARIO("Stack operator =","[operator =]"){
 	stack<int> A;
