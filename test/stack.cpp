@@ -22,7 +22,8 @@ template <typename T> /*noexcept*/
 stack<T>::stack() : array_(nullptr), array_size_(0), count_(0) {}
 template <typename T> /*noexcept*/
 stack<T>::~stack() { delete[] array_; }
-
+template <typename T> /*noexcept*/
+bool stack<T>::empty() const noexcept { return (count == 0); }
 template <typename T> /*strong*/
 stack<T>::stack(const stack<T> & st) : array_size_(st.array_size_), count_(st.count_), array_(newcopy(st.array_, st.count_, st.array_size_)) {}
 template <typename T> /*noexcept*/
