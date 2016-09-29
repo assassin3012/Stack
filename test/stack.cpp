@@ -40,7 +40,7 @@ void stack<T>::push(T const & el) {
 	array_[count_] = el;
         ++count_;
 }
-template <typename T> /*noexcept*/
+template <typename T> /*strong*/
 stack<T> & stack<T>::operator = (stack<T> & st) {
 	if (this != &st) {
 		(stack(st)).swap(*this);
