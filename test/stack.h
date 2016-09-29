@@ -12,7 +12,7 @@ public:
 	size_t count() const noexcept; /*noexcept*/
 	bool empty() const noexcept; /*noexcept*/
 	void push(T const & el); /*strong*/
-	stack<T> & operator = (stack<T> & st); /*noexcept*/
+	stack<T> & operator = (stack<T> & st); /*strong*/
 	void pop(); /*strong*/
 	T& top() const; /*strong*/
 private:
