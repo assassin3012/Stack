@@ -18,16 +18,22 @@ T* newcopy(const T* st, const size_t new_count, const size_t new_size) {
 	}
 	return ar;
 }
+
 template <typename T> /*noexcept*/
 stack<T>::stack() : array_(nullptr), array_size_(0), count_(0) {}
+
 template <typename T> /*noexcept*/
 stack<T>::~stack() { delete[] array_; }
+
 template <typename T> /*noexcept*/
 bool stack<T>::empty() const noexcept { return (count_ == 0); }
+
 template <typename T> /*strong*/
 stack<T>::stack(const stack<T> & st) : array_size_(st.array_size_), count_(st.count_), array_(newcopy(st.array_, st.count_, st.array_size_)) {}
+
 template <typename T> /*noexcept*/
 size_t stack<T>::count() const noexcept { return count_; }
+
 template <typename T> /*strong*/
 void stack<T>::push(T const & el) {
 	if (array_size_ == count_) {
@@ -40,6 +46,7 @@ void stack<T>::push(T const & el) {
 	array_[count_] = el;
         ++count_;
 }
+
 template <typename T> /*strong*/
 stack<T> & stack<T>::operator = (stack<T> & st) {
 	if (this != &st) {
@@ -47,6 +54,7 @@ stack<T> & stack<T>::operator = (stack<T> & st) {
 	}
 	return *this;
 }
+
 template <typename T> /*strong*/
 void stack<T>::pop() {
 	if (count_ != 0) {
@@ -54,6 +62,7 @@ void stack<T>::pop() {
 	}
 	else throw std::logic_error("Empty");
 }
+
 template <typename T> /*strong*/
 T& stack<T>::top() const {
 	if (count_ != 0) {
@@ -61,6 +70,7 @@ T& stack<T>::top() const {
 	}
 	else throw logic_error("Empty");
 }
+
 template <typename T> /*noexcept*/
 void stack<T>::swap(stack & st) {
 	std::swap(array_size_, st.array_size_);
