@@ -37,7 +37,8 @@ void stack<T>::push(T const & el) {
 		delete[] array_;
 		array_ = ar;
 	}
-	array_[count_++] = el;
+	array_[count_] = el;
+        ++count_;
 }
 template <typename T> /*noexcept*/
 stack<T> & stack<T>::operator = (stack<T> & st) {
