@@ -43,43 +43,47 @@ allocator<T>::allocator(size_t s) : size_(0), count_(s),
 	ptr_(static_cast<T *>(s != 0 ? operator new(s * sizeof(T))) : nullptr) {};
 
 template<typename T>
-allocator<T>::~allocator() {
-	operator delete(ptr_);
-}
+allocator<T>::~allocator() { operator delete(ptr_); }
 
-template <typename T>//swap allocator
-auto allocator<T>::swap(allocator& s)->void {
+template <typename T>
+auto allocator<T>::swap(allocator& s) -> bool {
 	std::swap(s.ptr_, ptr_);
 	std::swap(s.count_, count_);
 	std::swap(s.size_, size_);
 };
 
-template <typename T> /*noexcept*/
-stack<T>::stack() : array_(nullptr), array_size_(0), count_(0) {}
+template<typename T>
+stack<T>::stack(size_t s) : allocator<T>(s) {}
+
+template<typename T> 
+stack<T>::~stack() { destroy(allocator<T>::ptr_, allocator<T>::ptr_ + allocator<T>::count_); }
+
+template <typename T>
+bool stack<T>::empty() const noexcept { return (allocator<T>::count_ == 0); }
+
+template <typename T>
+stack<T>::stack(const stack& st) : allocator<T>(st.size_) {
+	for (size_t t = 0; t < st.count_; ++t) construct(allocator<T>::ptr_ + t, st.ptr_[t]);
+	allocator<T>::count_ = st.count_;
+};
 
 template <typename T> /*noexcept*/
-stack<T>::~stack() { delete[] array_; }
-
-template <typename T> /*noexcept*/
-bool stack<T>::empty() const noexcept { return (count_ == 0); }
-
-template <typename T> /*strong*/
-stack<T>::stack(const stack<T> & st) : array_size_(st.array_size_), count_(st.count_), array_(newcopy(st.array_, st.count_, st.array_size_)) {}
-
-template <typename T> /*noexcept*/
-size_t stack<T>::count() const noexcept { return count_; }
+size_t stack<T>::count() const noexcept { return allocator<T>::count_; }
 
 template <typename T> /*strong*/
 void stack<T>::push(T const & el) {
-	if (array_size_ == count_) {
-		if (array_size_ == 0) { array_size_ = 1; }
-		array_size_ = array_size_ * 2;
-		T * ar = newcopy(array_, count_, array_size_);
-		delete[] array_;
-		array_ = ar;
+	if (allocator<T>::size_ == allocator<T>::count_) {
+		if (allocator<T>::size_ == 0) { allocator<T>::size_ = 1; }
+		allocator<T>::size_ = allocator<T>::size_ * 2;
+		T * ar = static_cast<T *>(operator new (sizeof(T)*size_));
+		for (size_t t = 0; t < allocator<T>::count_; ++t) {
+			construct(ar + t, allocator<T>::ptr_[t]);
+		}
+		operator delete(allocator<T>::ptr_);
+		allocator<T>::ptr_ = ar;
 	}
-	array_[count_] = el;
-        ++count_;
+	construct(allocator<T>::ptr_ + allocator<T>::count_, el);
+        ++allocator<T>::count_;
 }
 
 template <typename T> /*strong*/
@@ -92,25 +96,17 @@ stack<T> & stack<T>::operator = (stack<T> & st) {
 
 template <typename T> /*strong*/
 void stack<T>::pop() {
-	if (count_ != 0) {
-		--count_;
+	if (allocator<T>::count_ != 0) {
+		--allocator<T>::count_;
 	}
 	else throw std::logic_error("Empty");
 }
 
 template <typename T> /*strong*/
 T& stack<T>::top() const {
-	if (count_ != 0) {
-		return array_[count_ - 1];
+	if (allocator<T>::count_ != 0) {
+		return allocator<T>::ptr_[allocator<T>::count_ - 1];
 	}
 	else throw std::logic_error("Empty");
 }
-
-template <typename T> /*noexcept*/
-void stack<T>::swap(stack & st) {
-	std::swap(array_size_, st.array_size_);
-	std::swap(count_, st.count_);
-	std::swap(array_, st.array_);
-}
-
 #endif
