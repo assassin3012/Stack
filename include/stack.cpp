@@ -19,6 +19,41 @@ T* newcopy(const T* st, const size_t new_count, const size_t new_size) {
 	return ar;
 }
 
+template <typename T1, typename T2>
+void construct(T1 * ptr, T2 const & value) {
+    new(ptr) T1 (value);
+}
+
+template <typename T>
+void destroy(T * ptr) noexcept
+{
+    ptr->~T();
+}
+
+template <typename FwdIter>
+void destroy(FwdIter first, FwdIter last) noexcept
+{
+    for (; first != last; ++first) {
+        destroy(&*first);
+    }
+}
+
+template <typename T>
+allocator<T>::allocator(size_t s) : size_(0), count_(s),
+	ptr_(static_cast<T *>(s != 0 ? operator new(s * sizeof(T))) : nullptr) {};
+
+template<typename T>
+allocator<T>::~allocator() {
+	operator delete(ptr_);
+}
+
+template <typename T>//swap allocator
+auto allocator<T>::swap(allocator& s)->void {
+	std::swap(s.ptr_, ptr_);
+	std::swap(s.count_, count_);
+	std::swap(s.size_, size_);
+};
+
 template <typename T> /*noexcept*/
 stack<T>::stack() : array_(nullptr), array_size_(0), count_(0) {}
 
