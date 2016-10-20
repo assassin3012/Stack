@@ -1,6 +1,6 @@
 #ifndef STACK_CPP
 #define STACK_CPP
-#include "stack.h"
+#include "stack.hpp"
 
 using namespace std;
 
