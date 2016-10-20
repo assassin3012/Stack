@@ -1,6 +1,5 @@
 #ifndef STACK_CPP
 #define STACK_CPP
-#include "stack.hpp"
 #include <stdexcept>
 using namespace std;
 
