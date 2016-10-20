@@ -111,7 +111,7 @@ void stack<T>::push(T const & el) {
 	if (allocator<T>::size_ == allocator<T>::count_) {
 		if (allocator<T>::size_ == 0) { allocator<T>::size_ = 1; }
 		allocator<T>::size_ = allocator<T>::size_ * 2;
-		T * ar = static_cast<T *>(operator new (sizeof(T)*size_));
+		T * ar = static_cast<T *>(operator new (sizeof(T)*allocator<T>::size_));
 		for (size_t t = 0; t < allocator<T>::count_; ++t) {
 			construct(ar + t, allocator<T>::ptr_[t]);
 		}
