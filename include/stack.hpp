@@ -3,7 +3,23 @@
 #include <iostream>
 
 template <typename T>
-class stack
+class allocator
+{
+protected:
+    allocator(size_t size = 0);
+    ~allocator();
+    auto swap(allocator & other) -> void;
+    
+    allocator(allocator const &) = delete;
+    auto operator =(allocator const &) -> allocator & = delete;
+    
+    T * ptr_;
+    size_t size_;
+    size_t count_;
+};
+
+template <typename T>
+class stack : private allocator<T>
 {
 public:
 	stack(); /*noexcept*/
