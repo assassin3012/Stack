@@ -45,7 +45,7 @@ T* newcopy(const T* st, const size_t new_count, const size_t new_size) {
 		}
 		catch (...) {
 			delete[] ar;
-			throw std::logic_error("???");
+			throw;
 		}
 	}
 	return ar;
@@ -135,7 +135,7 @@ void stack<T>::pop() {
 	if (allocator<T>::count_ != 0) {
 		--allocator<T>::count_;
 	}
-	else throw std::logic_error("Empty");
+	else throw;
 }
 
 template <typename T> /*strong*/
@@ -143,5 +143,5 @@ T& stack<T>::top() const {
 	if (allocator<T>::count_ != 0) {
 		return allocator<T>::ptr_[allocator<T>::count_ - 1];
 	}
-	else throw std::logic_error("Empty");
+	else throw;
 }
