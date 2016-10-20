@@ -1,4 +1,5 @@
 #include <iostream>
+using namespace srd;
 
 template <typename T>
 class allocator
