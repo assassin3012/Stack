@@ -31,7 +31,6 @@ public:
 	stack<T> & operator = (stack<T> & st); /*strong*/
 	void pop(); /*strong*/
 	T& top() const; /*strong*/
-	void swap(stack & st); /*noexcept*/
 };
 #include "stack.cpp"
 #endif
