@@ -68,7 +68,7 @@ T& stack<T>::top() const {
 	if (count_ != 0) {
 		return array_[count_ - 1];
 	}
-	else throw logic_error("Empty");
+	else throw std::logic_error("Empty");
 }
 
 template <typename T> /*noexcept*/
