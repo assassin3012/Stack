@@ -1,4 +1,3 @@
-
 #include "stack.h"
 #include <iostream>
 #include <catch.hpp>
