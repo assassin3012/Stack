@@ -21,5 +21,4 @@ private:
 	size_t count_;
 	void swap(stack & st); /*noexcept*/
 };
-#include "stack.cpp"
 #endif
