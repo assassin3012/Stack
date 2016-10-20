@@ -80,7 +80,7 @@ template<typename T>
 allocator<T>::~allocator() { operator delete(ptr_); }
 
 template <typename T>
-auto allocator<T>::swap(allocator& s) -> bool {
+auto allocator<T>::swap(allocator& s) -> void {
 	std::swap(s.ptr_, ptr_);
 	std::swap(s.count_, count_);
 	std::swap(s.size_, size_);
