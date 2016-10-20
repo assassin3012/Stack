@@ -74,7 +74,7 @@ void destroy(FwdIter first, FwdIter last) noexcept
 	
 template <typename T>
 allocator<T>::allocator(size_t s) : size_(0), count_(s),
-	ptr_(static_cast<T *>(s != 0 ? operator new(s * sizeof(T))) : nullptr) {};
+	ptr_(static_cast<T *>(s != 0 ? operator new(s * sizeof(T)) : nullptr)) {};
 
 template<typename T>
 allocator<T>::~allocator() { operator delete(ptr_); }
