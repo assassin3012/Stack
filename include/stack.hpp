@@ -84,7 +84,12 @@ bool stack<T>::empty() const noexcept { return (allocator<T>::count_ == 0); }
 
 template <typename T>
 stack<T>::stack(const stack& st) : allocator<T>(st.size_) {
-	for (size_t t = 0; t < st.count_; ++t) construct(allocator<T>::ptr_ + t, st.ptr_[t]);
+	if (st.count_! = 0) {
+		T * ar = static_cast<T *>(operator new (sizeof(T)*allocator<T>::size_));
+		for (size_t t = 0; t < st.count_; ++t) construct(ar + t, st.ptr_[t]);
+		operator delete(allocator<T>::ptr_);
+		allocator<T>::ptr_ = ar;
+	}
 	allocator<T>::count_ = st.count_;
 };
 
@@ -95,13 +100,14 @@ template <typename T> /*strong*/
 void stack<T>::push(T const & el) {
 	if (allocator<T>::size_ == allocator<T>::count_) {
 		if (allocator<T>::size_ == 0) { allocator<T>::size_ = 1; }
-		allocator<T>::size_ = allocator<T>::size_ * 2;
-		T * ar = static_cast<T *>(operator new (sizeof(T)*allocator<T>::size_));
+		size_t size = allocator<T>::size_ * 2;
+		T * ar = static_cast<T *>(operator new (sizeof(T)*size));
 		for (size_t t = 0; t < allocator<T>::count_; ++t) {
 			construct(ar + t, allocator<T>::ptr_[t]);
 		}
 		operator delete(allocator<T>::ptr_);
 		allocator<T>::ptr_ = ar;
+		allocator<T>::size_ = size;
 	}
 	construct(allocator<T>::ptr_ + allocator<T>::count_, el);
         ++allocator<T>::count_;
