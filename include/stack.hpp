@@ -31,25 +31,10 @@ public:
 	void push(T const & el); /*strong*/
 	stack<T> & operator = (stack<T> & st); /*strong*/
 	void pop(); /*strong*/
-	T& top() const; /*strong*/
+	const T& top() const; /*strong*/
 };
 
 //-----------------------------------------------------------------------------------------------------------------------------------------
-
-	template <typename T> /*strong*/
-T* newcopy(const T* st, const size_t new_count, const size_t new_size) {
-	T* ar = new T[new_size];
-	if (new_count > 0) {
-		try {
-			std::copy(st, st + new_count, ar);
-		}
-		catch (...) {
-			delete[] ar;
-			throw;
-		}
-	}
-	return ar;
-}
 
 template <typename T1, typename T2>
 void construct(T1 * ptr, T2 const & value) {
@@ -73,8 +58,8 @@ void destroy(FwdIter first, FwdIter last) noexcept
 //--------------------------------------------------------------------------------------------------------------------------------------
 	
 template <typename T>
-allocator<T>::allocator(size_t s) : size_(0), count_(s),
-	ptr_(static_cast<T *>(s != 0 ? operator new(s * sizeof(T)) : nullptr)) {};
+allocator<T>::allocator(size_t s) : ptr_(static_cast<T *>(s != 0 ? operator new(s * sizeof(T)) : nullptr)),
+	size_(0), count_(s) {};
 
 template<typename T>
 allocator<T>::~allocator() { operator delete(ptr_); }
@@ -139,7 +124,7 @@ void stack<T>::pop() {
 }
 
 template <typename T> /*strong*/
-T& stack<T>::top() const {
+const T& stack<T>::top() const {
 	if (allocator<T>::count_ != 0) {
 		return allocator<T>::ptr_[allocator<T>::count_ - 1];
 	}
