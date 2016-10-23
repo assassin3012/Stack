@@ -87,8 +87,7 @@ stack<T>::stack(const stack& st) : allocator<T>(st.size_) {
 	if (st.count_ != 0) {
 		T * ar = static_cast<T *>(operator new (sizeof(T)*allocator<T>::size_));
 		for (size_t t = 0; t < st.count_; ++t) construct(ar + t, st.ptr_[t]);
-		operator delete(allocator<T>::ptr_);
-		allocator<T>::ptr_ = ar;
+		std::swap(ar, ptr_);
 	}
 	allocator<T>::count_ = st.count_;
 };
@@ -105,8 +104,7 @@ void stack<T>::push(T const & el) {
 		for (size_t t = 0; t < allocator<T>::count_; ++t) {
 			construct(ar + t, allocator<T>::ptr_[t]);
 		}
-		operator delete(allocator<T>::ptr_);
-		allocator<T>::ptr_ = ar;
+		std::swap(ar, ptr_);
 		allocator<T>::size_ = size;
 	}
 	construct(allocator<T>::ptr_ + allocator<T>::count_, el);
