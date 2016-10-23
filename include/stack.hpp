@@ -77,10 +77,10 @@ template<typename T>
 stack<T>::stack(size_t s) : allocator<T>(s) {}
 
 template<typename T> 
-stack<T>::~stack() { destroy(allocator<T>::ptr_, allocator<T>::ptr_ + allocator<T>::count_); }
+stack<T>::~stack() { destroy(this->ptr_, this->ptr_ + this->count_); }
 
 template <typename T>
-bool stack<T>::empty() const noexcept { return (allocator<T>::count_ == 0); }
+bool stack<T>::empty() const noexcept { return (this->count_ == 0); }
 
 template <typename T>
 stack<T>::stack(const stack& st) : allocator<T>(st.size_) {
@@ -89,26 +89,26 @@ stack<T>::stack(const stack& st) : allocator<T>(st.size_) {
 		for (size_t t = 0; t < st.count_; ++t) construct(ar.ptr_ + t, st.ptr_[t]);
 		std::swap(ar.ptr_, this->ptr_);
 	}
-	allocator<T>::count_ = st.count_;
+	this->count_ = st.count_;
 };
 
 template <typename T> /*noexcept*/
-size_t stack<T>::count() const noexcept { return allocator<T>::count_; }
+size_t stack<T>::count() const noexcept { return this->count_; }
 
 template <typename T> /*strong*/
 void stack<T>::push(T const & el) {
-	if (allocator<T>::size_ == allocator<T>::count_) {
-		if (allocator<T>::size_ == 0) { allocator<T>::size_ = 1; }
-		size_t size = allocator<T>::size_ * 2;
+	if (this->size_ == this->count_) {
+		if (this->size_ == 0) { this->size_ = 1; }
+		size_t size = this->size_ * 2;
 		stack<T> ar(size);
-		for (size_t t = 0; t < allocator<T>::count_; ++t) {
-			construct(ar.ptr_ + t, allocator<T>::ptr_[t]);
+		for (size_t t = 0; t < this->count_; ++t) {
+			construct(ar.ptr_ + t, this->ptr_[t]);
 		}
 		std::swap(ar.ptr_, this->ptr_);
-		allocator<T>::size_ = size;
+		this->size_ = size;
 	}
-	construct(allocator<T>::ptr_ + allocator<T>::count_, el);
-        ++allocator<T>::count_;
+	construct(this->ptr_ + this->count_, el);
+        ++this->count_;
 }
 
 template <typename T> /*strong*/
@@ -121,16 +121,16 @@ stack<T> & stack<T>::operator = (stack<T> & st) {
 
 template <typename T> /*strong*/
 void stack<T>::pop() {
-	if (allocator<T>::count_ != 0) {
-		--allocator<T>::count_;
+	if (this->count_ != 0) {
+		--this->count_;
 	}
 	else throw;
 }
 
 template <typename T> /*strong*/
 const T& stack<T>::top() const {
-	if (allocator<T>::count_ != 0) {
-		return allocator<T>::ptr_[allocator<T>::count_ - 1];
+	if (this->count_ != 0) {
+		return this->ptr_this->count_ - 1];
 	}
 	else throw;
 }
