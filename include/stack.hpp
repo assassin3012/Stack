@@ -130,7 +130,7 @@ void stack<T>::pop() {
 template <typename T> /*strong*/
 const T& stack<T>::top() const {
 	if (this->count_ != 0) {
-		return this->ptr_this->count_ - 1];
+		return this->ptr_[this->count_ - 1];
 	}
 	else throw;
 }
