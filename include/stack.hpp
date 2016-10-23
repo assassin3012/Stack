@@ -86,7 +86,7 @@ template <typename T>
 stack<T>::stack(const stack& st) : allocator<T>(st.size_) {
 	if (st.count_ != 0) {
 		stack<T> ar(st.size_);
-		for (size_t t = 0; t < st.count_; ++t) construct(ar.ptr_[t], st.ptr_[t]);
+		for (size_t t = 0; t < st.count_; ++t) construct(ar.ptr_ + t, st.ptr_[t]);
 		std::swap(ar, this.ptr_);
 	}
 	allocator<T>::count_ = st.count_;
@@ -102,7 +102,7 @@ void stack<T>::push(T const & el) {
 		size_t size = allocator<T>::size_ * 2;
 		stack<T> ar(size);
 		for (size_t t = 0; t < allocator<T>::count_; ++t) {
-			construct(ar.ptr_[t], allocator<T>::ptr_[t]);
+			construct(ar.ptr_ + t, allocator<T>::ptr_[t]);
 		}
 		std::swap(ar, this.ptr_);
 		allocator<T>::size_ = size;
