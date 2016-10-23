@@ -85,8 +85,8 @@ bool stack<T>::empty() const noexcept { return (allocator<T>::count_ == 0); }
 template <typename T>
 stack<T>::stack(const stack& st) : allocator<T>(st.size_) {
 	if (st.count_ != 0) {
-		T * ar = static_cast<T *>(operator new (sizeof(T)*allocator<T>::size_));
-		for (size_t t = 0; t < st.count_; ++t) construct(ar + t, st.ptr_[t]);
+		stack<T> ar(st.size_);
+		for (size_t t = 0; t < st.count_; ++t) construct(ar.ptr_[t], st.ptr_[t]);
 		std::swap(ar, ptr_);
 	}
 	allocator<T>::count_ = st.count_;
@@ -100,9 +100,9 @@ void stack<T>::push(T const & el) {
 	if (allocator<T>::size_ == allocator<T>::count_) {
 		if (allocator<T>::size_ == 0) { allocator<T>::size_ = 1; }
 		size_t size = allocator<T>::size_ * 2;
-		T * ar = static_cast<T *>(operator new (sizeof(T)*size));
+		stack<T> ar(size);
 		for (size_t t = 0; t < allocator<T>::count_; ++t) {
-			construct(ar + t, allocator<T>::ptr_[t]);
+			construct(ar.ptr_[t], allocator<T>::ptr_[t]);
 		}
 		std::swap(ar, ptr_);
 		allocator<T>::size_ = size;
