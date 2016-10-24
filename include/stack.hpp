@@ -146,7 +146,7 @@ auto allocator<T>::resize() -> void {
 	for (size_t t = 0; t < count_; ++t) {
 		this->construct(ptr_ + t, other.get()[t]);
 	}
-	std::swap(other.get(), ptr_); 
+	ptr_ = other.get();
 	bs_.resize();
 	size_ = size;	
 }
@@ -228,7 +228,7 @@ void stack<T>::push(T const & el) {
 template <typename T>
 stack<T> & stack<T>::operator = (stack<T> & st) {
 	if (this != &st) {
-		(st.al_).swap(*this->al_);
+		(allocator<T>(st.al_)).swap(this->al_);
 	}
 	return *this;
 }
