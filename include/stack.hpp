@@ -36,7 +36,7 @@ protected:
     	auto count() const noexcept -> size_t;
     	auto full() const noexcept -> bool;
     	auto empty() const noexcept -> bool;
-private:
+	
     	T * ptr_;
     	size_t size_;
     	size_t count_;
