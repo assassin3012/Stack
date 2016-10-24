@@ -89,7 +89,7 @@ bitset::bitset(size_t s) noexcept : size_(s) {
 	if (s != 0) bit_ = new bool[s];
 	for (size_t t = 0; t < s; ++t)
  	{			
-		bit_[t-1] = False;
+		bit_[t-1] = 0;
 	}
 }
 
@@ -102,12 +102,12 @@ auto bitset::test(size_t index) const -> bool {
 
 auto bitset::set(size_t index) const -> void { 
 	if (index >= size_) throw;
-	else bit_[index] = True;
+	else bit_[index] = 1;
 }
 
 auto bitset::reset(size_t index) const -> void { 
 	if (index >= size_) throw;
-	else bit_[index] = False;
+	else bit_[index] = 0;
 }
 
 auto bitset::resize() -> void { 
