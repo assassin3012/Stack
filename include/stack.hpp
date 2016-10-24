@@ -198,7 +198,7 @@ template<typename T>
 stack<T>::stack(size_t s) : al_(s) {}
 
 template<typename T> 
-stack<T>::~stack() { destroy(al_.get(), al_.get() + al_.count_(); }
+stack<T>::~stack() { destroy(al_.get(), al_.get() + al_.count_()); }
 
 template <typename T>
 bool stack<T>::empty() const noexcept { return (al_.count_() == 0); }
