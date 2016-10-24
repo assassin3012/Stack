@@ -110,7 +110,7 @@ auto bitset::reset(size_t index) -> void {
 	else bit_[index] = 0;
 }
 
-auto bitset::resize() -> void { 
+auto bitset::resize() noexcept -> void { 
 	size_t size = size_ * 2 + (size_ == 0);
 	bitset temp(size);
 	for (size_t t = 0; t < size_; ++t)
