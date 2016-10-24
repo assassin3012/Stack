@@ -2,6 +2,21 @@
 #include <iostream>
 #include <stdexcept>
 
+class bitset
+{
+public:
+	explicit bitset(size_t size = 0) noexcept;
+	~bitset();
+	auto test(size_t index) const -> bool;
+	auto set(size_t index) -> void;
+	auto reset(size_t index) -> void;
+	auto resize() noexcept -> void;
+private:
+	std::vector<bool> bit_;
+}
+
+//--------------------------------------------------------------------------------------------------------------------------------------
+
 template <typename T>
 class allocator
 {
@@ -46,21 +61,6 @@ private:
 };
 
 //--------------------------------------------------------------------------------------------------------------------------------------
-
-class bitset
-{
-public:
-	explicit bitset(size_t size = 0) noexcept;
-	~bitset();
-	auto test(size_t index) const -> bool;
-	auto set(size_t index) -> void;
-	auto reset(size_t index) -> void;
-	auto resize() noexcept -> void;
-private:
-	std::vector<bool> bit_;
-}
-
-//-----------------------------------------------------------------------------------------------------------------------------------------
 
 template <typename T>
 void construct(T * ptr, T const & value) {
