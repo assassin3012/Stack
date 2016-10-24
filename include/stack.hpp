@@ -164,11 +164,11 @@ auto allocator<T>::destroy(T * ptr) -> void {
 template <typename T>
 auto allocator<T>::construct(T * ptr, T const & value ) -> void {
 	if (ptr >= ptr_ + size_ || ptr <= ptr_) throw;
-	if (bs_.test(ptr)) {
+	if (bs_.test(ptr - ptr_)) {
 		this->destroy(ptr);
 	}
 	new(ptr) T (value);
-	bs_.set(ptr);
+	bs_.set(ptr - ptr_);
 	++count_;
 }
 
