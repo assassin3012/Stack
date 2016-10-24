@@ -146,7 +146,7 @@ auto allocator<T>::resize() -> void {
 	for (size_t t = 0; t < count_; ++t) {
 		this->construct(ptr_ + t, other.get()[t]);
 	}
-	ptr_ = other.get();
+	this->swap(other);
 	bs_.resize();
 	size_ = size;	
 }
