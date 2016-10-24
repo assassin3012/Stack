@@ -1,11 +1,12 @@
 #pragma once
 #include <iostream>
+#include <stdexcept>
 
 template <typename T>
 class allocator
 {
 protected:
-    	allocator(size_t size = 0);
+    	explicit allocator(size_t size = 0);
 	allocator(allocator const & other);
     	~allocator();
 	auto operator =(allocator const &) -> allocator & = delete;
@@ -18,19 +19,20 @@ protected:
     	auto count() const noexcept -> size_t;
     	auto full() const noexcept -> bool;
     	auto empty() const noexcept -> bool;
-
+private:
     	T * ptr_;
     	size_t size_;
     	size_t count_;
+	bitset bs_;
 };
 
 //-----------------------------------------------------------------------------------------------------------------------------------------
 
 template <typename T>
-class stack : private allocator<T>
+class stack
 {
 public:
-	stack(size_t size = 0); /*noexcept*/
+	explicit stack(size_t size = 0); /*noexcept*/
 	stack(const stack<T> & st); /*strong*/
 	~stack(); /*noexcept*/
 	size_t count() const noexcept; /*noexcept*/
@@ -39,13 +41,30 @@ public:
 	stack<T> & operator = (stack<T> & st); /*strong*/
 	void pop(); /*strong*/
 	const T& top() const; /*strong*/
+private:	
+	allocator<T> al_;
 };
+
+//--------------------------------------------------------------------------------------------------------------------------------------
+
+class bitset
+{
+public:
+	explicit bitset(size_t size = 0) noexcept;
+	~bitset();
+	auto test(size_t index) const -> bool;
+	auto set(size_t index) -> void;
+	auto reset(size_t index) -> void;
+	auto resize() noexcept -> void;
+private:
+	std::vector<bool> bit_;
+}
 
 //-----------------------------------------------------------------------------------------------------------------------------------------
 
-template <typename T1, typename T2>
-void construct(T1 * ptr, T2 const & value) {
-	new(ptr) T1 (value);
+template <typename T>
+void construct(T * ptr, T const & value) {
+	new(ptr) T (value);
 }
 
 template <typename T>
@@ -63,16 +82,43 @@ void destroy(FwdIter first, FwdIter last) noexcept
 }
 
 //--------------------------------------------------------------------------------------------------------------------------------------
-	
+
+bitset::bitset(size_t s) noexcept { bit_(s, False); }
+
+bitset::~bitset() { bit_.clear(); }
+
+auto bitset::test(size_t index) const -> bool { 
+	if (index >= bit_.size()) throw;
+	else return bit_[index];
+}
+
+auto bitset::set(size_t index) const -> void { 
+	if (index >= bit_.size()) throw;
+	else bit_[index] = True;
+}
+
+auto bitset::reset(size_t index) const -> void { 
+	if (index >= bit_.size()) throw;
+	else bit_[index] = False;
+}
+
+auto bitset::resize() noexcept -> void { 
+	size_t size = bit_.size() * 2 + (bit_.size() == 0);
+	bs_.resize(size, False);
+}
+
+//--------------------------------------------------------------------------------------------------------------------------------------
+
 template <typename T>
 allocator<T>::allocator(size_t s) : ptr_(static_cast<T *>(s != 0 ? operator new(s * sizeof(T)) : nullptr)),
-	size_(s), count_(0) {}
+	size_(s), count_(0), bs_(s) {}
 
 template <typename T>
 allocator<T>::allocator(allocator const & other) : ptr_(static_cast<T *>(other.size != 0 ? operator new(other.size * sizeof(T)) : nullptr)),
-	size_(other.size), count_(0) {
-	for (size_t t = 0; t < other.count_; ++t) construct(ptr_ + t, other.ptr_[t]);
-	count_ = other.count_;	
+	size_(other.size), count_(0), bs_(other.size) {
+	for (size_t t = 0; t < other.count_; ++t) {
+		this->construct(ptr_ + t, other.ptr_[t]);
+	}
 }
 
 template<typename T>
@@ -80,40 +126,33 @@ allocator<T>::~allocator() { operator delete(ptr_); }
 
 template <typename T>
 auto allocator<T>::resize() -> void {
-	if (size_ == 0) { size_ = 1; }
-	size_t size = size_ * 2;
-	stack<T> ar(size);
-	for (size_t t = 0; t < count_; ++t) construct(ar.ptr_ + t, ptr_[t]);
-	std::swap(ar.ptr_, ptr_);
+	size_t size = size_ * 2 + (size_ == 0);
+	for (size_t t = 0; t < count_; ++t) {
+		this->construct(ptr_ + t, other.ptr_[t]);
+	}
+	bs_.resize();
 	size_ = size;	
 }
 
 template<typename T>
 auto allocator<T>::destroy(T * ptr) -> void {
 	if (ptr >= ptr_ + size_ || ptr <= ptr_) throw;
-	if (ptr_ + count_ <= ptr) {
-		for (size_t t = 0; ptr_ + count_ + t != ptr; --t) {
-			(ptr_ + count_ + t)->~T();
-		}
+	if (bs_.test(ptr)) {
 		ptr->~T();
-		count_ = ptr - ptr_;
+		bs_.reset(ptr);
+		--count_;
 	}
 }
 
 template <typename T>
 auto allocator<T>::construct(T * ptr, T const & value ) -> void {
 	if (ptr >= ptr_ + size_ || ptr <= ptr_) throw;
-	if (ptr_ + count_ >= ptr) {
+	if (bs_.test(ptr)) {
 		this->destroy(ptr);
-		new(ptr) T (value);
 	}
-	else {
-		for (size_t t = 0; ptr_ + count_ + t != ptr; ++t) {
-			new(ptr_ + count_ + t) T (value);
-		}
-		new(ptr) T (value);
-		count_ = ptr - ptr_;
-	}
+	new(ptr) T (value);
+	bs_.set(ptr);
+	++count_
 }
 
 template<typename T>
@@ -136,69 +175,51 @@ auto allocator<T>::swap(allocator& s) -> void {
 	std::swap(s.ptr_, ptr_);
 	std::swap(s.count_, count_);
 	std::swap(s.size_, size_);
+	std::swap(s.bs_, bs_);
 }
 
 //--------------------------------------------------------------------------------------------------------------------------------------
 
 template<typename T>
-stack<T>::stack(size_t s) : allocator<T>(s) {}
+stack<T>::stack(size_t s) : al_(s) {}
 
 template<typename T> 
-stack<T>::~stack() { destroy(this->ptr_, this->ptr_ + this->count_); }
+stack<T>::~stack() { destroy(al_.get(), al_.get() + al_.count_(); }
 
 template <typename T>
-bool stack<T>::empty() const noexcept { return (this->count_ == 0); }
+bool stack<T>::empty() const noexcept { return (al_.count_() == 0); }
 
 template <typename T>
-stack<T>::stack(const stack& st) : allocator<T>(st.size_) {
-	if (st.count_ != 0) {
-		stack<T> ar(st.size_);
-		for (size_t t = 0; t < st.count_; ++t) {
-                       construct(ar.ptr_ + t, st.ptr_[t]);
-                       ++ar.count_;
-                }
-		std::swap(ar.ptr_, this->ptr_);
-	}
-	this->count_ = st.count_;
-}
+stack<T>::stack(const stack& st) : al_(st.al_) {}
 
-template <typename T> /*noexcept*/
-size_t stack<T>::count() const noexcept { return this->count_; }
+template <typename T> 
+size_t stack<T>::count() const noexcept { return al_.count_(); }
 
-template <typename T> /*strong*/
+template <typename T> 
 void stack<T>::push(T const & el) {
-	if (this->size_ == this->count_) {
-		if (this->size_ == 0) { this->size_ = 1; }
-		size_t size = this->size_ * 2;
-		stack<T> ar(size);
-		for (size_t t = 0; t < this->count_; ++t) construct(ar.ptr_ + t, this->ptr_[t]);
-		std::swap(ar.ptr_, this->ptr_);
-		this->size_ = size;
+	if (al_.full() || al_.empty()) {
+		al_.resize();
 	}
-	construct(this->ptr_ + this->count_, el);
-        ++this->count_;
+	al_.construct(al_.get() + al_.count(), el);
 }
 
-template <typename T> /*strong*/
+template <typename T>
 stack<T> & stack<T>::operator = (stack<T> & st) {
 	if (this != &st) {
-		(stack(st)).swap(*this);
+		(st.al_).swap(*this->al_);
 	}
 	return *this;
 }
 
-template <typename T> /*strong*/
+template <typename T>
 void stack<T>::pop() {
-	if (this->count_ != 0) {
-		--this->count_;
-	}
-	else throw;
+	if (al_.empty()) throw;
+	else al_.destroy(al_.get() + al_.count() - 1);
 }
 
-template <typename T> /*strong*/
+template <typename T>
 const T& stack<T>::top() const {
-	if (this->count_ != 0) {
-		return this->ptr_[this->count_ - 1];
-	}
-	else throw;
+	if (al_.empty()) throw;
+	else return al_.get()[al_.count() - 1];
+}
 }
