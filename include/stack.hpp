@@ -166,7 +166,7 @@ auto allocator<T>::construct(T * ptr, T const & value ) -> void {
 	}
 	new(ptr) T (value);
 	bs_.set(ptr);
-	++count_
+	++count_;
 }
 
 template<typename T>
