@@ -22,7 +22,7 @@ private:
 template <typename T>
 class allocator
 {
-protected:
+public:
     	explicit allocator(size_t size = 0);
 	allocator(allocator const & other);
     	~allocator();
@@ -36,7 +36,7 @@ protected:
     	auto count() const noexcept -> size_t;
     	auto full() const noexcept -> bool;
     	auto empty() const noexcept -> bool;
-	
+private:	
     	T * ptr_;
     	size_t size_;
     	size_t count_;
@@ -141,9 +141,11 @@ allocator<T>::~allocator() { operator delete(ptr_); }
 template <typename T>
 auto allocator<T>::resize() -> void {
 	size_t size = size_ * 2 + (size_ == 0);
+	allocator<T> other(size);
 	for (size_t t = 0; t < count_; ++t) {
 		this->construct(ptr_ + t, other.ptr_[t]);
 	}
+	std::swap(other.ptr_, ptr_); 
 	bs_.resize();
 	size_ = size;	
 }
