@@ -59,7 +59,7 @@ void destroy(FwdIter first, FwdIter last) noexcept
 	
 template <typename T>
 allocator<T>::allocator(size_t s) : ptr_(static_cast<T *>(s != 0 ? operator new(s * sizeof(T)) : nullptr)),
-	size_(0), count_(s) {};
+	size_(s), count_(0) {};
 
 template<typename T>
 allocator<T>::~allocator() { operator delete(ptr_); }
@@ -86,7 +86,10 @@ template <typename T>
 stack<T>::stack(const stack& st) : allocator<T>(st.size_) {
 	if (st.count_ != 0) {
 		stack<T> ar(st.size_);
-		for (size_t t = 0; t < st.count_; ++t) construct(ar.ptr_ + t, st.ptr_[t]);
+		for (size_t t = 0; t < st.count_; ++t) {
+                       construct(ar.ptr_ + t, st.ptr_[t]);
+                       ++ar.count_;
+                }
 		std::swap(ar.ptr_, this->ptr_);
 	}
 	this->count_ = st.count_;
