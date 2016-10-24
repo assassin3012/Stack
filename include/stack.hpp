@@ -154,9 +154,10 @@ auto allocator<T>::resize() -> void {
 template<typename T>
 auto allocator<T>::destroy(T * ptr) -> void {
 	if (ptr >= ptr_ + size_ || ptr <= ptr_) throw;
-	if (bs_.test(ptr - ptr_)) {
+	size_t t = ptr - ptr_;
+	if (bs_.test(t)) {
 		ptr->~T();
-		bs_.reset(ptr - ptr_);
+		bs_.reset(t);
 		--count_;
 	}
 }
@@ -164,11 +165,12 @@ auto allocator<T>::destroy(T * ptr) -> void {
 template <typename T>
 auto allocator<T>::construct(T * ptr, T const & value ) -> void {
 	if (ptr >= ptr_ + size_ || ptr <= ptr_) throw;
-	if (bs_.test(ptr - ptr_)) {
+	size_t t = ptr - ptr_;
+	if (bs_.test(t)) {
 		this->destroy(ptr);
 	}
 	new(ptr) T (value);
-	bs_.set(ptr - ptr_);
+	bs_.set(t);
 	++count_;
 }
 
