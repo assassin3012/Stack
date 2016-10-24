@@ -86,7 +86,7 @@ void destroy(FwdIter first, FwdIter last) noexcept
 //--------------------------------------------------------------------------------------------------------------------------------------
 
 bitset::bitset(size_t s) noexcept : size_(s) {
-	if (s != 0) bit_ = new bool*[s];
+	if (s != 0) bit_ = new bool[s];
 	for (size_t t = 0; t < s; ++t)
  	{			
 		bit_[t-1] = False;
