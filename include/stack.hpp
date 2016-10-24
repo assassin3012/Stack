@@ -100,12 +100,12 @@ auto bitset::test(size_t index) const -> bool {
 	else return bit_[index];
 }
 
-auto bitset::set(size_t index) const -> void { 
+auto bitset::set(size_t index) -> void { 
 	if (index >= size_) throw;
 	else bit_[index] = 1;
 }
 
-auto bitset::reset(size_t index) const -> void { 
+auto bitset::reset(size_t index) -> void { 
 	if (index >= size_) throw;
 	else bit_[index] = 0;
 }
