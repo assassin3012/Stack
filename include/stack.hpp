@@ -13,7 +13,9 @@ public:
 	auto reset(size_t index) -> void;
 	auto resize() noexcept -> void;
 private:
-	std::vector<bool> bit_;
+	size_t size_;
+	bool* bit_;
+
 };
 
 //--------------------------------------------------------------------------------------------------------------------------------------
@@ -84,28 +86,40 @@ void destroy(FwdIter first, FwdIter last) noexcept
 
 //--------------------------------------------------------------------------------------------------------------------------------------
 
-bitset::bitset(size_t s) noexcept { bit_(s, False); }
+bitset::bitset(size_t s) noexcept : size_(s) {
+	if (s != 0) bit_ = new bool*[s];
+	for (size_t t = 0; t < s; ++t)
+ 	{			
+		bit_[t-1] = False;
+	}
+}
 
-bitset::~bitset() { bit_.clear(); }
+bitset::~bitset() { delete[] bit_;  }
 
 auto bitset::test(size_t index) const -> bool { 
-	if (index >= bit_.size()) throw;
+	if (index >= size_) throw;
 	else return bit_[index];
 }
 
 auto bitset::set(size_t index) const -> void { 
-	if (index >= bit_.size()) throw;
+	if (index >= size_) throw;
 	else bit_[index] = True;
 }
 
 auto bitset::reset(size_t index) const -> void { 
-	if (index >= bit_.size()) throw;
+	if (index >= size_) throw;
 	else bit_[index] = False;
 }
 
-auto bitset::resize() noexcept -> void { 
-	size_t size = bit_.size() * 2 + (bit_.size() == 0);
-	bs_.resize(size, False);
+auto bitset::resize() -> void { 
+	size_t size = size_ * 2 + (size_ == 0);
+	bitset temp(size);
+	for (size_t t = 0; t < size_; ++t)
+ 	{			
+		temp.bit_[t-1] = bit_[t-1];
+	}
+	std::swap(temp.bit_, bit_);
+	size_ = size;
 }
 
 //--------------------------------------------------------------------------------------------------------------------------------------
