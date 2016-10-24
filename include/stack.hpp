@@ -236,4 +236,3 @@ const T& stack<T>::top() const {
 	if (al_.empty()) throw;
 	else return al_.get()[al_.count() - 1];
 }
-}
