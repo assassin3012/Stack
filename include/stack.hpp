@@ -219,7 +219,7 @@ template<typename T>
 stack<T>::stack(size_t s) : al_(s) {}
 
 template<typename T>
-stack<T>::~stack() { destroy(al_.get(), al_.get() + al_.count()); }
+stack<T>::~stack() { al_.destroy(al_.get(), al_.get() + al_.count()); }
 
 template <typename T>
 bool stack<T>::empty() const noexcept { return (al_.count() == 0); }
@@ -259,22 +259,5 @@ const T& stack<T>::top() const {
 	if (al_.empty()) std::logic_error("In top");
 	else {
 		return al_.get()[al_.count() - 1];
-	}
-}
-
-template <typename T>
-void construct(T * ptr, T const & value) {
-	new(ptr) T(value);
-}
-
-template <typename T>
-void destroy(T * ptr) noexcept {
-	ptr->~T();
-}
-
-template <typename FwdIter>
-void destroy(FwdIter first, FwdIter last) noexcept {
-	for (; first != last; ++first) {
-		destroy(&*first);
 	}
 }
