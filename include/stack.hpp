@@ -87,21 +87,21 @@ bit_(other.size() != 0 ? new bool[other.size()] : nullptr) {
 bitset::~bitset() { delete[] bit_; }
 
 auto bitset::test(size_t index) const -> bool {
-	if (index >= size_) std::throw::out_of_range("In test");
+	if (index >= size_) std::out_of_range("In test");
 	else {
 		return bit_[index];
 	}
 }
 
 auto bitset::set(size_t index) -> void {
-	if (index >= size_) std::throw::out_of_range("In set");
+	if (index >= size_) std::out_of_range("In set");
 	else {
 		bit_[index] = true;
 	}
 }
 
 auto bitset::reset(size_t index) -> void {
-	if (index >= size_) std::throw::out_of_range("In reset");
+	if (index >= size_) std::out_of_range("In reset");
 	else {
 		bit_[index] = false;
 	}
@@ -156,7 +156,7 @@ auto allocator<T>::resize() -> void {
 
 template<typename T>
 auto allocator<T>::destroy(T * ptr) -> void {
-	if (ptr >= ptr_ + size_ || ptr < ptr_) std::throw::out_of_range("In destroy");
+	if (ptr >= ptr_ + size_ || ptr < ptr_) std::out_of_range("In destroy");
 	size_t t = ptr - ptr_;
 	if (bs_.test(t)) {
 		ptr->~T();
@@ -174,7 +174,7 @@ auto allocator<T>::destroy(T * first, T * last)  -> void {
 
 template <typename T>
 auto allocator<T>::construct(T * ptr, T const & value) -> void {
-	if (ptr >= ptr_ + size_ || ptr < ptr_) std::throw::out_of_range("In construct");
+	if (ptr >= ptr_ + size_ || ptr < ptr_) std::out_of_range("In construct");
 	size_t t = ptr - ptr_;
 	if (bs_.test(t)) {
 		this->destroy(ptr);
@@ -248,7 +248,7 @@ stack<T> & stack<T>::operator = (stack<T> & st) {
 
 template <typename T>
 void stack<T>::pop() {
-	if (al_.empty()) std::throw::logic_error("In pop");
+	if (al_.empty()) std::logic_error("In pop");
 	else {
 		al_.destroy(al_.get() + al_.count() - 1);
 	}
@@ -256,7 +256,7 @@ void stack<T>::pop() {
 
 template <typename T>
 const T& stack<T>::top() const {
-	if (al_.empty()) std::throw::logic_error("In top");
+	if (al_.empty()) std::logic_error("In top");
 	else {
 		return al_.get()[al_.count() - 1];
 	}
