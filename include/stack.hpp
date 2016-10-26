@@ -5,13 +5,13 @@
 class bitset
 {
 public:
-	explicit bitset(size_t size = 0) noexcept;
+	explicit bitset(size_t size = 0);
 	bitset(bitset const & other);
 	~bitset();
 	auto test(size_t index) const -> bool;
 	auto set(size_t index) -> void;
 	auto reset(size_t index) -> void;
-	auto resize() noexcept -> void;
+	auto resize() -> void;
 	auto size() const noexcept -> size_t;
 	auto swap(bitset& other) -> void;
 private:
@@ -70,7 +70,7 @@ private:
 
 //--------------------------------------------------------------------------------------------------------------------------------------
 
-bitset::bitset(size_t s) noexcept : size_(s), 
+bitset::bitset(size_t s) : size_(s), 
 bit_(s != 0 ? new bool[s] : nullptr) {
 	for (size_t t = 0; t < s; ++t) {
 		bit_[t] = 0;
@@ -107,7 +107,7 @@ auto bitset::reset(size_t index) -> void {
 	}
 }
 
-auto bitset::resize() noexcept -> void {
+auto bitset::resize() -> void {
 	size_t size = size_ * 2 + (size_ == 0);
 	bitset temp(size);
 	for (size_t t = 0; t < size_; ++t) {
