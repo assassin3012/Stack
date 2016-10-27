@@ -141,7 +141,7 @@ size_(other.size()), count_(0), bs_(other.size()) {
 
 template<typename T>
 allocator<T>::~allocator() { 
-	if (coun_ > 0) {
+	if (count_ > 0) {
 		this->destroy(ptr_, ptr_ + size_);
 	}
 	operator delete(ptr_);
