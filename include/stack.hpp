@@ -140,7 +140,13 @@ size_(other.size()), count_(0), bs_(other.size()) {
 }
 
 template<typename T>
-allocator<T>::~allocator() { this->destroy(ptr_, ptr_ + size_); }
+allocator<T>::~allocator() { 
+	if (coun_ > 0) {
+		this->destroy(ptr_, ptr_ + size_);
+	}
+	operator delete(ptr_);
+}
+	
 
 template <typename T>
 auto allocator<T>::resize() -> void {
