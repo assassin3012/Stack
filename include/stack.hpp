@@ -56,7 +56,6 @@ class stack
 {
 public:
 	explicit stack(size_t size = 0); /*noexcept*/
-	stack(const stack<T> & st); /*strong*/
 	~stack(); /*noexcept*/
 	size_t count() const noexcept; /*noexcept*/
 	bool empty() const noexcept; /*noexcept*/
@@ -231,14 +230,11 @@ template <typename T>
 bool stack<T>::empty() const noexcept { return (al_.count() == 0); }
 
 template <typename T>
-stack<T>::stack(const stack& st) : al_(st.al_) {}
-
-template <typename T>
 size_t stack<T>::count() const noexcept { return al_.count(); }
 
 template <typename T>
 void stack<T>::push(T const & el) {
-	if (al_.full() || al_.empty()) {
+	if (al_.full()) {
 		al_.resize();
 	}
 	al_.construct(al_.get() + al_.count(), el);
