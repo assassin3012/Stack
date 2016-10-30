@@ -161,7 +161,7 @@ auto allocator<T>::resize() -> void {
 
 template<typename T>
 auto allocator<T>::destroy(T * ptr) -> void {
-	if (ptr >= ptr_ + size_ || ptr < ptr_) std::out_of_range("In destroy");
+	if (ptr >= ptr_ + size_ || ptr < ptr_) std::out_of_range("In destroy(T * ptr)");
 	size_t t = ptr - ptr_;
 	if (bs_.test(t)) {
 		ptr->~T();
