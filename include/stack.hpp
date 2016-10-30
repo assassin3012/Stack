@@ -28,16 +28,16 @@ public:
 	explicit allocator(size_t size = 0);
 	allocator(allocator const & other);
 	~allocator();
-	auto operator =(allocator const &)->allocator & = delete;
+	auto operator =(allocator const &) -> allocator & = delete;
 	auto swap(allocator & other) -> void;
 	auto resize() -> void;
 	auto construct(T * ptr, T const & value) -> void;
 	auto destroy(T * ptr) -> void;
 	auto destroy(T * first, T * last) -> void;
-	auto get()->T *;
-	auto get() const->T const *;
-	auto count() const noexcept->size_t;
-	auto size() const noexcept->size_t;
+	auto get() noexcept -> T *;
+	auto get() const noexcept -> T const *;
+	auto count() const noexcept -> size_t;
+	auto size() const noexcept -> size_t;
 	auto full() const noexcept -> bool;
 	auto empty() const noexcept -> bool;
 	auto test(size_t index) const -> bool;
@@ -57,12 +57,12 @@ class stack
 public:
 	explicit stack(size_t size = 0); /*noexcept*/
 	~stack(); /*noexcept*/
-	size_t count() const noexcept; /*noexcept*/
-	bool empty() const noexcept; /*noexcept*/
-	void push(T const & el); /*strong*/
-	stack<T> & operator = (stack<T> & st); /*strong*/
-	void pop(); /*strong*/
-	const T& top() const; /*strong*/
+	auto count() const noexcept -> size_t; /*noexcept*/
+	auto empty() const noexcept -> bool; /*noexcept*/
+	auto push(T const & el) -> void; /*strong*/
+	auto operator = (stack<T> & st) -> stack<T> &; /*strong*/
+	auto pop() -> void; /*strong*/
+	auto top() const -> T const &; /*strong*/
 private:
 	allocator<T> al_;
 };
@@ -190,10 +190,10 @@ auto allocator<T>::construct(T * ptr, T const & value) -> void {
 }
 
 template<typename T>
-auto allocator<T>::get() -> T * { return ptr_; }
+auto allocator<T>::get() noexcept-> T * { return ptr_; }
 
 template<typename T>
-auto allocator<T>::get() const -> T const * { return ptr_; }
+auto allocator<T>::get() const noexcept-> T const * { return ptr_; }
 
 template<typename T>
 auto allocator<T>::count() const noexcept -> size_t { return count_; }
@@ -227,13 +227,13 @@ template<typename T>
 stack<T>::~stack() {}
 
 template <typename T>
-bool stack<T>::empty() const noexcept { return (al_.count() == 0); }
+auto stack<T>::empty() const noexcept -> bool { return (al_.count() == 0); }
 
 template <typename T>
-size_t stack<T>::count() const noexcept { return al_.count(); }
+auto stack<T>::count() const noexcept -> size_t { return al_.count(); }
 
 template <typename T>
-void stack<T>::push(T const & el) {
+auto stack<T>::push(T const & el) ->void {
 	if (al_.full()) {
 		al_.resize();
 	}
@@ -241,7 +241,7 @@ void stack<T>::push(T const & el) {
 }
 
 template <typename T>
-stack<T> & stack<T>::operator = (stack<T> & st) {
+auto stack<T>::operator = (stack<T> & st) -> stack<T> & {
 	if (this != &st) {
 		(allocator<T>(st.al_)).swap(al_);
 	}
@@ -249,7 +249,7 @@ stack<T> & stack<T>::operator = (stack<T> & st) {
 }
 
 template <typename T>
-void stack<T>::pop() {
+auto stack<T>::pop() -> void {
 	if (al_.empty()) std::logic_error("In pop");
 	else {
 		al_.destroy(al_.get() + al_.count() - 1);
@@ -257,7 +257,7 @@ void stack<T>::pop() {
 }
 
 template <typename T>
-const T& stack<T>::top() const {
+auto stack<T>::top() const -> T const & {
 	if (al_.empty()) std::logic_error("In top");
 	else {
 		return al_.get()[al_.count() - 1];
