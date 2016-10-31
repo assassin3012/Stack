@@ -15,7 +15,7 @@ public:
 	auto set(size_t index) -> void;
 	auto reset(size_t index) -> void;
 	auto size() const noexcept -> size_t;
-	auto swap(bitset& other) -> void;
+	auto swap(bitset & other) -> void;
 private:
 	size_t size_;
 	bool* bit_;
@@ -115,7 +115,7 @@ auto bitset::swap(bitset& other) -> void {
 	std::swap(bit_, other.bit_);
 }
 
-autobitset::throw_about_range() const -> void {
+auto bitset::throw_about_range() const -> void {
 	throw (std::out_of_range("Out of range"));
 }
 
