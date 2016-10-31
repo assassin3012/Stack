@@ -90,20 +90,16 @@ auto bitset::test(size_t index) const -> bool {
 auto bitset::set(size_t index) -> void {
 	if (index >= size_) std::out_of_range("In set");
 	else {
-		if (!this->test(index)) {
-			ptr_[index] = true;
-			++counter_;
-		}
+		ptr_[index] = true;
+		++counter_;
 	}
 }
 
 auto bitset::reset(size_t index) -> void {
 	if (index >= size_) std::out_of_range("In reset");
 	else {
-		if (this->test(index)) {
-			ptr_[index] = false;
-			--counter
-		}
+		ptr_[index] = false;
+		--counter
 	}
 }
 
