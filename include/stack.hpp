@@ -11,12 +11,12 @@ public:
 	auto test(size_t index) const -> bool;
 	auto set(size_t index) -> void;
 	auto reset(size_t index) -> void;
-	auto resize() -> void;
 	auto size() const noexcept -> size_t;
 	auto swap(bitset& other) -> void;
 private:
 	size_t size_;
 	bool* bit_;
+	auto throw_about_range() -> void
 };
 
 //--------------------------------------------------------------------------------------------------------------------------------------
@@ -85,33 +85,24 @@ bitset::bitset(bitset const & other) : bitset(other.size()) {
 bitset::~bitset() { delete[] bit_; }
 
 auto bitset::test(size_t index) const -> bool {
-	if (index >= size_) std::out_of_range("In test");
+	if (index >= size_) throw_about_range();
 	else {
 		return bit_[index];
 	}
 }
 
 auto bitset::set(size_t index) -> void {
-	if (index >= size_) std::out_of_range("In set");
+	if (index >= size_) throw_about_range();
 	else {
 		bit_[index] = true;
 	}
 }
 
 auto bitset::reset(size_t index) -> void {
-	if (index >= size_) std::out_of_range("In reset");
+	if (index >= size_) throw_about_range();
 	else {
 		bit_[index] = false;
 	}
-}
-
-auto bitset::resize() -> void {
-	size_t size = size_ * 2 + (size_ == 0);
-	bitset temp(size);
-	for (size_t t = 0; t < size_; ++t) {
-		temp.bit_[t] = bit_[t];
-	}
-	temp.swap(*this);
 }
 
 auto bitset::size() const noexcept -> size_t {return size_; }
@@ -119,6 +110,10 @@ auto bitset::size() const noexcept -> size_t {return size_; }
 auto bitset::swap(bitset& other) -> void {
 	std::swap(size_, other.size_);
 	std::swap(bit_, other.bit_);
+}
+
+autobitset::throw_about_range() const -> void {
+	throw (std::out_of_range("Out of range"));
 }
 
 //--------------------------------------------------------------------------------------------------------------------------------------
