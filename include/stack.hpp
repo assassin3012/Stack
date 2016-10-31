@@ -129,8 +129,7 @@ allocator<T>::allocator(size_t s) : ptr_(static_cast<T *>(s != 0 ? operator new(
 size_(s), count_(0), bs_(s) {}
 
 template <typename T>
-allocator<T>::allocator(allocator const & other) : ptr_(static_cast<T *>(other.size() != 0 ? operator new(other.size() * sizeof(T)) : nullptr)),
-size_(other.size()), count_(0), bs_(other.size()) {
+allocator<T>::allocator(allocator const & other) : allocator<T>(other.size()) {
 	for (size_t t = 0; t < other.size(); ++t) {
 		if (other.test(t)) {
 			this->construct(ptr_ + t, other.get()[t]);
