@@ -15,7 +15,7 @@ public:
 	auto set(size_t index) throw(std::out_of_range) -> void;
 	auto reset(size_t index) throw(std::out_of_range) -> void;
 	auto size() const noexcept -> size_t;
-	auto swap(bitset & other) -> void;
+	auto swap(bitset & other)  noexcept -> void;
 private:
 	size_t size_;
 	bool* bit_;
@@ -109,7 +109,7 @@ auto bitset::reset(size_t index) throw(std::out_of_range) -> void {
 
 auto bitset::size() const noexcept -> size_t {return size_; }
 
-auto bitset::swap(bitset& other) -> void {
+auto bitset::swap(bitset& other) noexcept -> void {
 	std::swap(size_, other.size_);
 	std::swap(bit_, other.bit_);
 }
@@ -121,7 +121,7 @@ allocator<T>::allocator(size_t s) : ptr_(static_cast<T *>(s != 0 ? operator new(
 size_(s), count_(0), bs_(s) {}
 
 template <typename T>
-allocator<T>::allocator(allocator const & other) : allocator<T>(other.size()) {
+allocator<T>::allocator(allocator const & other) : allocator(other.size()) {
 	for (size_t t = 0; t < other.size(); ++t) {
 		if (other.test(t)) {
 			this->construct(ptr_ + t, other.get()[t]);
