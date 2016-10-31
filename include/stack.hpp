@@ -11,7 +11,6 @@ public:
 	auto operator =(bitset const & other) -> bitset & = delete;
 	bitset(bitset && other) = delete;
 	auto operator =(bitset && other) -> bitset & = delete;
-	~bitset();
 	auto test(size_t index) const -> bool;
 	auto set(size_t index) -> void;
 	auto reset(size_t index) -> void;
@@ -80,8 +79,6 @@ bitset::bitset(size_t s) : ptr_(std::make_unique<bool[]>(s)),
 		ptr_[t] = 0;
 	}
 }
-
-bitset::~bitset() { delete[] bit_; }
 
 auto bitset::test(size_t index) const -> bool {
 	if (index >= size_) std::out_of_range("In test");
