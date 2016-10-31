@@ -125,7 +125,7 @@ size_(other.size()), map_(std::make_unique<bitset>(other.size())) {
 
 template<typename T>
 allocator<T>::~allocator() { 
-	if (map_->counter_() > 0) {
+	if (map_->counter() > 0) {
 		this->destroy(ptr_, ptr_ + size_);
 	}
 	operator delete(ptr_);
@@ -222,7 +222,7 @@ auto stack<T>::push(T const & el) ->void {
 template <typename T>
 auto stack<T>::operator = (stack<T> & st) -> stack<T> & {
 	if (this != &st) {
-		(this->al_).swap(allocator<T>(st.al_));
+		(al_).swap(allocator<T>(st.al_));
 	}
 	return *this;
 }
