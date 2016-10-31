@@ -76,8 +76,7 @@ bit_(s != 0 ? new bool[s] : nullptr) {
 	}
 }
 
-bitset::bitset(bitset const & other) : size_(other.size()), 
-bit_(other.size() != 0 ? new bool[other.size()] : nullptr) {
+bitset::bitset(bitset const & other) : bitset(other.size()) {
 	for (size_t t = 0; t < size_; ++t) {
 		bit_[t] = other.bit_[t];
 	}
