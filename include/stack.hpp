@@ -224,7 +224,6 @@ auto stack<T>::operator = (stack<T> & st) -> stack<T> & {
 	if (this != &st) {
 		(allocator<T>(other.al_)).swap(al_);
 	}
-	}
 	return *this;
 }
 
