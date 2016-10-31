@@ -222,7 +222,7 @@ template<typename T>
 stack<T>::stack(size_t s) : al_(s) {}
 
 template<typename T>
-stack<T>::~stack() { al_->destroy(al_.get(), al_.get() + al_.size()); }
+stack<T>::~stack() { al_->destroy(al_.get(), al_.get() + al_.count()); }
 
 template <typename T>
 auto stack<T>::empty() const noexcept -> bool { return (al_.count() == 0); }
