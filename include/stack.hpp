@@ -125,7 +125,7 @@ size_(other.size()), map_(std::make_unique<bitset>(other.size())) {
 
 template<typename T>
 allocator<T>::~allocator() { 
-	if (map->counter_ > 0) {
+	if (map_->counter_ > 0) {
 		this->destroy(ptr_, ptr_ + size_);
 	}
 	operator delete(ptr_);
@@ -169,7 +169,7 @@ auto allocator<T>::construct(T * ptr, T const & value) -> void {
 		this->destroy(ptr);
 	}
 	new(ptr) T(value);
-	map_->set(ptr);
+	map_->set(t);
 }
 
 template<typename T>
