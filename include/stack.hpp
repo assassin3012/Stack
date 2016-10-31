@@ -7,6 +7,7 @@ class bitset
 public:
 	explicit bitset(size_t size = 0);
 	bitset(bitset const & other);
+	auto operator =(bitset const &) -> bitset & = delete;
 	~bitset();
 	auto test(size_t index) const -> bool;
 	auto set(size_t index) -> void;
