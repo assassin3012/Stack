@@ -6,8 +6,10 @@ class bitset
 {
 public:
 	explicit bitset(size_t size = 0);
-	bitset(bitset const & other);
-	auto operator =(bitset const &) -> bitset & = delete;
+	bitset(bitset const & other) = delete;
+	auto operator =(bitset const & other) -> bitset & = delete;
+	bitset(bitset && other) = delete;
+	auto operator =(bitset && other) -> bitset & = delete;;
 	~bitset();
 	auto test(size_t index) const -> bool;
 	auto set(size_t index) -> void;
@@ -77,11 +79,11 @@ bit_(s != 0 ? new bool[s] : nullptr) {
 	}
 }
 
-bitset::bitset(bitset const & other) : bitset(other.size()) {
+/*bitset::bitset(bitset const & other) : bitset(other.size()) {
 	for (size_t t = 0; t < size_; ++t) {
 		bit_[t] = other.bit_[t];
 	}
-}
+}*/
 
 bitset::~bitset() { delete[] bit_; }
 
