@@ -115,7 +115,7 @@ size_(s), map_(std::make_unique<bitset>(s)) {}
 
 template <typename T>
 allocator<T>::allocator(allocator const & other) : ptr_(static_cast<T *>(other.size() != 0 ? operator new(other.size() * sizeof(T)) : nullptr)),
-size_(other.size()), map_(std::make_unique<bitset>(other.size())) { {
+size_(other.size()), map_(std::make_unique<bitset>(other.size())) {
 	for (size_t t = 0; t < other.size(); ++t) {
 		if (other.test(t)) {
 			this->construct(ptr_ + t, other.get()[t]);
