@@ -148,9 +148,9 @@ template<typename T>
 auto allocator<T>::destroy(T * ptr) -> void {
 	if (ptr >= ptr_ + size_ || ptr < ptr_) std::out_of_range("In destroy(T * ptr)");
 	size_t t = ptr - ptr_;
-	if (bs_.test(t)) {
+	if (this->test(t)) {
 		ptr->~T();
-		bs_.reset(t);
+		map_->reset(t);
 	}
 }
 
@@ -165,11 +165,11 @@ template <typename T>
 auto allocator<T>::construct(T * ptr, T const & value) -> void {
 	if (ptr >= ptr_ + size_ || ptr < ptr_) std::out_of_range("In construct");
 	size_t t = ptr - ptr_;
-	if (bs_.test(t)) {
+	if (this->test(t)) {
 		this->destroy(ptr);
 	}
 	new(ptr) T(value);
-	bs_.set(t);
+	map_->set(ptr);
 }
 
 template<typename T>
@@ -191,7 +191,7 @@ template<typename T>
 auto allocator<T>::empty() const noexcept -> bool { return (map_->counter() == 0); }
 
 template<typename T>
-auto allocator<T>::test(size_t index) const -> bool { return bs_.test(index); }
+auto allocator<T>::test(size_t index) const -> bool { return map_->test(index); }
 
 template <typename T>
 auto allocator<T>::swap(allocator& s) -> void {
