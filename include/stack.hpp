@@ -11,15 +11,14 @@ public:
 	bitset(bitset && other) = delete;
 	auto operator =(bitset && other) -> bitset & = delete;;
 	~bitset();
-	auto test(size_t index) const -> bool;
-	auto set(size_t index) -> void;
-	auto reset(size_t index) -> void;
+	auto test(size_t index) const throw(std::out_of_range) -> bool;
+	auto set(size_t index) throw(std::out_of_range) -> void;
+	auto reset(size_t index) throw(std::out_of_range) -> void;
 	auto size() const noexcept -> size_t;
 	auto swap(bitset & other) -> void;
 private:
 	size_t size_;
 	bool* bit_;
-	auto throw_about_range() const -> void;
 };
 
 //--------------------------------------------------------------------------------------------------------------------------------------
@@ -34,8 +33,8 @@ public:
 	auto operator =(allocator const &) -> allocator & = delete;
 	auto swap(allocator & other) -> void;
 	auto resize() -> void;
-	auto construct(T * ptr, T const & value) -> void;
-	auto destroy(T * ptr) -> void;
+	auto construct(T * ptr, T const & value) throw(std::out_of_range) -> void;
+	auto destroy(T * ptr) throw(std::out_of_range) -> void;
 	auto destroy(T * first, T * last) -> void;
 	auto get() noexcept -> T *;
 	auto get() const noexcept -> T const *;
@@ -64,8 +63,8 @@ public:
 	auto empty() const noexcept -> bool; /*noexcept*/
 	auto push(T const & el) -> void; /*strong*/
 	auto operator = (stack<T> & st) -> stack<T> &; /*strong*/
-	auto pop() -> void; /*strong*/
-	auto top() const -> T const &; /*strong*/
+	auto pop() throw(std::logic_error) -> void; /*strong*/
+	auto top() const throw(std::logic_error) -> T const &; /*strong*/
 private:
 	allocator<T> al_;
 };
@@ -87,22 +86,22 @@ bit_(s != 0 ? new bool[s] : nullptr) {
 
 bitset::~bitset() { delete[] bit_; }
 
-auto bitset::test(size_t index) const -> bool {
-	if (index >= size_) throw_about_range();
+auto bitset::test(size_t index) const throw(std::out_of_range) -> bool {
+	if (index >= size_) std::out_of_range("In test");
 	else {
 		return bit_[index];
 	}
 }
 
-auto bitset::set(size_t index) -> void {
-	if (index >= size_) throw_about_range();
+auto bitset::set(size_t index) throw(std::out_of_range) -> void {
+	if (index >= size_) std::out_of_range("In set");
 	else {
 		bit_[index] = true;
 	}
 }
 
-auto bitset::reset(size_t index) -> void {
-	if (index >= size_) throw_about_range();
+auto bitset::reset(size_t index) throw(std::out_of_range) -> void {
+	if (index >= size_) std::out_of_range("In reset");
 	else {
 		bit_[index] = false;
 	}
@@ -113,10 +112,6 @@ auto bitset::size() const noexcept -> size_t {return size_; }
 auto bitset::swap(bitset& other) -> void {
 	std::swap(size_, other.size_);
 	std::swap(bit_, other.bit_);
-}
-
-auto bitset::throw_about_range() const -> void {
-	throw (std::out_of_range("Out of range"));
 }
 
 //--------------------------------------------------------------------------------------------------------------------------------------
@@ -156,7 +151,7 @@ auto allocator<T>::resize() -> void {
 }
 
 template<typename T>
-auto allocator<T>::destroy(T * ptr) -> void {
+auto allocator<T>::destroy(T * ptr) throw(std::out_of_range) -> void {
 	if (ptr >= ptr_ + size_ || ptr < ptr_) std::out_of_range("In destroy(T * ptr)");
 	size_t t = ptr - ptr_;
 	if (bs_.test(t)) {
@@ -174,7 +169,7 @@ auto allocator<T>::destroy(T * first, T * last)  -> void {
 }
 
 template <typename T>
-auto allocator<T>::construct(T * ptr, T const & value) -> void {
+auto allocator<T>::construct(T * ptr, T const & value) throw(std::out_of_range) -> void {
 	if (ptr >= ptr_ + size_ || ptr < ptr_) std::out_of_range("In construct");
 	size_t t = ptr - ptr_;
 	if (bs_.test(t)) {
@@ -245,7 +240,7 @@ auto stack<T>::operator = (stack<T> & st) -> stack<T> & {
 }
 
 template <typename T>
-auto stack<T>::pop() -> void {
+auto stack<T>::pop() throw(std::logic_error) -> void {
 	if (al_.empty()) std::logic_error("In pop");
 	else {
 		al_.destroy(al_.get() + al_.count() - 1);
@@ -253,7 +248,7 @@ auto stack<T>::pop() -> void {
 }
 
 template <typename T>
-auto stack<T>::top() const -> T const & {
+auto stack<T>::top() const throw(std::logic_error) -> T const & {
 	if (al_.empty()) std::logic_error("In top");
 	else {
 		return al_.get()[al_.count() - 1];
