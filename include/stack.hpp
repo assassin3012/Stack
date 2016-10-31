@@ -42,9 +42,9 @@ public:
 	auto full() const noexcept -> bool;
 	auto empty() const noexcept -> bool;
 	auto test(size_t index) const -> bool;
+	auto swap(allocator & other) -> void;	
 private:
 	auto destroy(T * first, T * last) -> void;
-	auto swap(allocator & other) -> void;
 	T * ptr_;
 	size_t size_;
 	std::unique_ptr<bitset> map_;
