@@ -99,7 +99,7 @@ auto bitset::reset(size_t index) -> void {
 	if (index >= size_) std::out_of_range("In reset");
 	else {
 		ptr_[index] = false;
-		--counter
+		--counter_;
 	}
 }
 
