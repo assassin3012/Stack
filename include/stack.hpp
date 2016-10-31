@@ -222,7 +222,8 @@ auto stack<T>::push(T const & el) ->void {
 template <typename T>
 auto stack<T>::operator = (stack<T> & st) -> stack<T> & {
 	if (this != &st) {
-		(al_).swap(allocator<T>(st.al_));
+		(allocator<T>(other.al_)).swap(al_);
+	}
 	}
 	return *this;
 }
