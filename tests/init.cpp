@@ -2,7 +2,7 @@
 #include <iostream>
 #include <catch.hpp>
 
-SCENARIO("Stack init, count and empty", "[init_count]"){
+SCENARIO("Stack init, count", "[init_count]"){
 	stack<bool> A;
 	REQUIRE(A.count() == 0);
 	REQUIRE(A.empty());
@@ -19,7 +19,7 @@ SCENARIO("Stack push, top and pop", "[PTP]") {
 	A.pop();
 	REQUIRE(A.empty());
 }
-SCENARIO("Stack operator =","[operator =]"){
+SCENARIO("Stack operator =","[oper]"){
 	stack<int> A;
 	A.push(221);
 	stack<int> B = A; 
