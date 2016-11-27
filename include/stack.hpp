@@ -1,8 +1,9 @@
 #pragma once
 #include <iostream>
 #include <stdexcept>
-#include <mutex>
 #include <thread>
+#include <mutex>
+
 
 class bitset
 {
