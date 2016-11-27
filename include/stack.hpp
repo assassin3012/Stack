@@ -258,8 +258,6 @@ auto stack<T>::operator = (stack const & st) -> stack & {
 		
 	}
 	return *this;
-	st.m_.unlock();
-	m_.unlock();
 }
 
 template <typename T>
