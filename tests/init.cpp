@@ -2,6 +2,19 @@
 #include <iostream>
 #include <catch.hpp>
 
+SCENARIO("Stack threads", "threads") {
+	stack<int> A;
+	st.push(13);
+	st.push(666);
+	std::thread t1(&stack<int>::push, &A, 404);
+	t1.join();
+	REQUIRE(st.top() == 404);
+	REQUIRE(st.count() == 3);
+	std::thread t2(&stack<int>::pop, &A);
+	t2.join();
+	REQUIRE(st.top() == 666);
+	REQUIRE(st.count() == 2);
+}
 SCENARIO("Stack init, count and empty", "[init_count]"){
 	stack<bool> A;
 	REQUIRE(A.count() == 0);
