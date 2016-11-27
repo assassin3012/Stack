@@ -32,7 +32,7 @@ public:
 	explicit allocator(size_t size = 0);
 	allocator(allocator const & other);
 	~allocator();
-	auto operator =(allocator const &) -> allocator & = delete;
+	auto operator =(allocator const &) -> allocator &;
 	auto swap(allocator & other) -> void;
 	auto resize() -> void;
 	auto construct(T * ptr, T const & value) throw(std::out_of_range) -> void;
