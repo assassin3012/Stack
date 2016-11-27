@@ -134,7 +134,7 @@ allocator<T>::allocator(allocator const & other) : allocator(other.size()) {
 }
 
 template <typename T>
-allocator<T>::operator =(allocator const & other) -> allocator& : allocator(other.size()) {
+allocator<T>::operator =(allocator const & other) -> allocator& {
 	if (this != &other) {
 		(allocator<T>(other)).swap(*this);
 		
