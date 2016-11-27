@@ -133,6 +133,15 @@ allocator<T>::allocator(allocator const & other) : allocator(other.size()) {
 	}
 }
 
+template <typename T>
+allocator<T>::operator =(allocator const & other) -> allocator& : allocator(other.size()) {
+	if (this != &other) {
+		(allocator<T>(other)).swap(*this);
+		
+	}
+	return *this;
+}
+
 template<typename T>
 allocator<T>::~allocator() { 
 	if (count_ > 0) {
@@ -221,7 +230,7 @@ stack<T>::stack(size_t s) : al_(s) {}
 template <typename T>
 stack<T>::stack(stack const & st) {
 	std::lock_guard<std::mutex> lock(st.m_);
-	al_(st.al_);
+	al_ = st.al_;
 }
 
 template<typename T>
