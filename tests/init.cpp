@@ -4,8 +4,8 @@
 
 SCENARIO("Stack threads", "threads") {
 	stack<int> A;
-	st.push(13);
-	st.push(666);
+	A.push(13);
+	A.push(666);
 	std::thread t1(&stack<int>::push, &A, 404);
 	t1.join();
 	REQUIRE(A.top() == 404);
