@@ -243,7 +243,7 @@ auto stack<T>::push(T const & el) ->void {
 }
 
 template <typename T>
-auto stack<T>::operator = (stack<T> & st) -> stack<T> & {
+auto stack<T>::operator = (stack const & st) -> stack & {
 	std::lock_guard<std::mutex> lock(m_);
 	if (this != &st) {
 		(allocator<T>(st.al_)).swap(al_);
