@@ -219,7 +219,7 @@ template<typename T>
 stack<T>::stack(size_t s) : al_(s) {}
 
 template <typename T>
-stack<T>::stack(stack const & st) -> stack & {
+stack<T>::stack(stack const & st) {
 	std::lock_guard<std::mutex> lock(st.m_);
 	al_(st.al);
 }
