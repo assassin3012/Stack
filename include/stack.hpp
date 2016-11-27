@@ -32,7 +32,7 @@ public:
 	explicit allocator(size_t size = 0);
 	allocator(allocator const & other);
 	~allocator();
-	auto operator =(allocator const &) -> allocator &;
+	auto operator =(allocator const &) -> allocator & = delete;
 	auto swap(allocator & other) -> void;
 	auto resize() -> void;
 	auto construct(T * ptr, T const & value) throw(std::out_of_range) -> void;
@@ -133,15 +133,6 @@ allocator<T>::allocator(allocator const & other) : allocator(other.size()) {
 	}
 }
 
-template <typename T>
-allocator<T>::operator =(allocator const & other) -> allocator& {
-	if (this != &other) {
-		(allocator<T>(other)).swap(*this);
-		
-	}
-	return *this;
-}
-
 template<typename T>
 allocator<T>::~allocator() { 
 	if (count_ > 0) {
@@ -228,9 +219,9 @@ template<typename T>
 stack<T>::stack(size_t s) : al_(s) {}
 
 template <typename T>
-stack<T>::stack(stack const & st) {
+stack<T>::stack(stack const & st) : al_(0) {
 	std::lock_guard<std::mutex> lock(st.m_);
-	al_ = st.al_;
+	al_.swap(allocator<T>(st.al_));
 }
 
 template<typename T>
