@@ -1,6 +1,8 @@
 #pragma once
 #include <iostream>
 #include <stdexcept>
+#include <mutex>
+#include <thread>
 
 class bitset
 {
@@ -58,15 +60,17 @@ class stack
 {
 public:
 	explicit stack(size_t size = 0); /*noexcept*/
+	stack(stack const & st) = default; /*strong*/
 	~stack(); /*noexcept*/
 	auto count() const noexcept -> size_t; /*noexcept*/
 	auto empty() const noexcept -> bool; /*noexcept*/
 	auto push(T const & el) -> void; /*strong*/
-	auto operator = (stack<T> & st) -> stack<T> &; /*strong*/
+	auto operator = (stack const & st) -> stack &; /*strong*/
 	auto pop() throw(std::logic_error) -> void; /*strong*/
 	auto top() const throw(std::logic_error) -> T const &; /*strong*/
 private:
 	allocator<T> al_;
+	mutable std::mutex m_;
 };
 
 //--------------------------------------------------------------------------------------------------------------------------------------
@@ -218,13 +222,20 @@ template<typename T>
 stack<T>::~stack() { al_.destroy(al_.get(), al_.get() + al_.count()); }
 
 template <typename T>
-auto stack<T>::empty() const noexcept -> bool { return (al_.count() == 0); }
+auto stack<T>::empty() const noexcept -> bool {
+	std::lock_guard<std::mutex> lock(m_);
+	return (al_.count() == 0); 
+}
 
 template <typename T>
-auto stack<T>::count() const noexcept -> size_t { return al_.count(); }
+auto stack<T>::count() const noexcept -> size_t { 
+	std::lock_guard<std::mutex> lock(m_);
+	return al_.count(); 
+}
 
 template <typename T>
 auto stack<T>::push(T const & el) ->void {
+	std::lock_guard<std::mutex> lock(m_);
 	if (al_.full()) {
 		al_.resize();
 	}
@@ -233,6 +244,7 @@ auto stack<T>::push(T const & el) ->void {
 
 template <typename T>
 auto stack<T>::operator = (stack<T> & st) -> stack<T> & {
+	std::lock_guard<std::mutex> lock(m_);
 	if (this != &st) {
 		(allocator<T>(st.al_)).swap(al_);
 	}
@@ -241,6 +253,7 @@ auto stack<T>::operator = (stack<T> & st) -> stack<T> & {
 
 template <typename T>
 auto stack<T>::pop() throw(std::logic_error) -> void {
+	std::lock_guard<std::mutex> lock(m_);
 	if (al_.empty()) std::logic_error("In pop");
 	else {
 		al_.destroy(al_.get() + al_.count() - 1);
@@ -249,6 +262,7 @@ auto stack<T>::pop() throw(std::logic_error) -> void {
 
 template <typename T>
 auto stack<T>::top() const throw(std::logic_error) -> T const & {
+	std::lock_guard<std::mutex> lock(m_);
 	if (al_.empty()) std::logic_error("In top");
 	else {
 		return al_.get()[al_.count() - 1];
