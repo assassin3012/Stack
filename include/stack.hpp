@@ -217,10 +217,10 @@ auto allocator<T>::swap(allocator& s) -> void {
 //--------------------------------------------------------------------------------------------------------------------------------------
 
 template<typename T>
-stack<T>::stack(size_t s) : al_(s) {}
+stack<T>::stack(size_t s) : al_(s), m_() {}
 
 template <typename T>
-stack<T>::stack(stack const & st) : al_(0) {
+stack<T>::stack(stack const & st) : al_(0), m_() {
 	std::lock_guard<std::mutex> lock(st.m_);
 	allocator<T>(st.al_).swap(al_);
 }
