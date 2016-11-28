@@ -249,7 +249,6 @@ auto stack<T>::operator = (stack const & st) -> stack & {
 
 template <typename T>
 auto stack<T>::pop() throw(std::logic_error) -> void {
-	std::lock_guard<std::mutex> lock(m_);
 	if (al_.empty()) std::logic_error("In pop");
 	else {
 		al_.destroy(al_.get() + al_.count() - 1);
@@ -258,7 +257,6 @@ auto stack<T>::pop() throw(std::logic_error) -> void {
 
 template <typename T>
 auto stack<T>::top() const throw(std::logic_error) -> T const & {
-	std::lock_guard<std::mutex> lock(m_);
 	if (al_.empty()) std::logic_error("In top");
 	else {
 		return al_.get()[al_.count() - 1];
