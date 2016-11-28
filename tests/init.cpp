@@ -12,7 +12,7 @@ SCENARIO("Stack threads", "threads") {
 	std::thread t2(&stack<int>::pop, &A);
 	t2.join();
 	REQUIRE(*A.pop() == 666);
-	REQUIRE(A.count() == 2);
+	REQUIRE(A.count() == 1);
 }
 SCENARIO("Stack init, count and empty", "[init_count]"){
 	stack<bool> A;
@@ -39,6 +39,6 @@ SCENARIO("Stack operator =","[operator =]"){
 	stack<int> B1;
 	A1.push(221);
 	B1 = A1; 
-	REQUIRE(B.count() == 1);
-	REQUIRE(*B.pop() == 221);
+	REQUIRE(B1.count() == 1);
+	REQUIRE(*B1.pop() == 221);
 }
