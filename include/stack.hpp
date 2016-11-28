@@ -260,7 +260,6 @@ auto stack<T>::operator = (stack const & st) -> stack & {
 		std::lock_guard<std::mutex> lock_a(m_, std::adopt_lock);
 		std::lock_guard<std::mutex> lock_b(st.m_, std::adopt_lock);
 		(allocator<T>(st.al_)).swap(al_);
-
 	}
 	return *this;
 }
