@@ -1,7 +1,7 @@
 // stack.cpp: определяет точку входа для консольного приложения.
 //
 #pragma once
-#include "stdafx.h"
+//#include "stdafx.h"
 #include <iostream>
 #include <stdexcept>
 #include <memory>
