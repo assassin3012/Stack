@@ -11,7 +11,7 @@ SCENARIO("Stack threads", "threads") {
 	REQUIRE(A.count() == 3);
 	std::thread t2(&stack<int>::pop, &A);
 	t2.join();
-	REQUIRE(*A.top() == 666);
+	REQUIRE(*A.pop() == 666);
 	REQUIRE(A.count() == 2);
 }
 SCENARIO("Stack init, count and empty", "[init_count]"){
