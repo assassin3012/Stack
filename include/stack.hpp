@@ -4,9 +4,9 @@
 //#include "stdafx.h"
 #include <iostream>
 #include <stdexcept>
-#include <memory>
-#include <thread>
-#include <mutex>
+//#include <memory>
+//#include <thread>
+//#include <mutex>
 
 
 class bitset
@@ -65,17 +65,16 @@ class stack
 {
 public:
 	explicit stack(size_t size = 0); /*noexcept*/
-	stack(stack const & st); /*strong*/
+	stack(stack const & st) = default; /*strong*/
 	~stack(); /*noexcept*/
 	auto count() const noexcept->size_t; /*noexcept*/
 	auto empty() const noexcept -> bool; /*noexcept*/
 	auto push(T const & el) -> void; /*strong*/
 	auto operator = (stack const & st)->stack &; /*strong*/
-	auto pop() throw(std::logic_error) -> const std::shared_ptr<T>; /*strong*/
-	//auto top() const throw(std::logic_error)->T const &; /*strong*/
+	auto pop() throw(std::logic_error) -> void; /*strong*/
+	auto top() const throw(std::logic_error)->T const &; /*strong*/
 private:
 	allocator<T> al_;
-	mutable std::mutex m_;
 };
 
 //--------------------------------------------------------------------------------------------------------------------------------------
@@ -221,32 +220,19 @@ auto allocator<T>::swap(allocator& s) -> void {
 //--------------------------------------------------------------------------------------------------------------------------------------
 
 template<typename T>
-stack<T>::stack(size_t s) : al_(s), m_() {}
-
-template <typename T>
-stack<T>::stack(stack const & st) : al_(0), m_() {
-	std::lock_guard<std::mutex> lock(st.m_);
-	allocator<T>(st.al_).swap(al_);
-}
+stack<T>::stack(size_t s) : al_(s) {}
 
 template<typename T>
-stack<T>::~stack() { /*al_.destroy(al_.get(), al_.get() + al_.count());*/ }
+stack<T>::~stack() { al_.destroy(al_.get(), al_.get() + al_.count()); }
 
 template <typename T>
-auto stack<T>::empty() const noexcept -> bool {
-	std::lock_guard<std::mutex> lock(m_);
-	return (al_.count() == 0);
-}
+auto stack<T>::empty() const noexcept -> bool { return (al_.count() == 0); }
 
 template <typename T>
-auto stack<T>::count() const noexcept -> size_t {
-	std::lock_guard<std::mutex> lock(m_);
-	return al_.count();
-}
+auto stack<T>::count() const noexcept -> size_t { return al_.count(); }
 
 template <typename T>
 auto stack<T>::push(T const & el) ->void {
-	std::lock_guard<std::mutex> lock(m_);
 	if (al_.full()) {
 		al_.resize();
 	}
@@ -256,27 +242,12 @@ auto stack<T>::push(T const & el) ->void {
 template <typename T>
 auto stack<T>::operator = (stack const & st) -> stack & {
 	if (this != &st) {
-		std::lock(m_, st.m_);
-		std::lock_guard<std::mutex> lock_a(m_, std::adopt_lock);
-		std::lock_guard<std::mutex> lock_b(st.m_, std::adopt_lock);
 		(allocator<T>(st.al_)).swap(al_);
-
 	}
 	return *this;
 }
 
 template <typename T>
-auto stack<T>::pop() throw(std::logic_error) -> const std::shared_ptr<T> {
-	std::lock_guard<std::mutex> lock(m_);
-	if (al_.empty()) std::logic_error("In pop");
-	else {
-		const std::shared_ptr<T> top_(std::make_shared<T>(al_.get()[al_.count() - 1]));
-		al_.destroy(al_.get() + al_.count() - 1);
-		return top_;
-	}
-}
-
-/*template <typename T>
 auto stack<T>::pop() throw(std::logic_error) -> void {
 	std::lock_guard<std::mutex> lock(m_);
 	if (al_.empty()) std::logic_error("In pop");
@@ -292,4 +263,4 @@ auto stack<T>::top() const throw(std::logic_error) -> T const & {
 	else {
 		return al_.get()[al_.count() - 1];
 	}
-}*/
+}
