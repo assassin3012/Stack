@@ -1,6 +1,10 @@
+// stack.cpp: определяет точку входа для консольного приложения.
+//
 #pragma once
+#include "stdafx.h"
 #include <iostream>
 #include <stdexcept>
+#include <memory>
 #include <thread>
 #include <mutex>
 
@@ -10,14 +14,14 @@ class bitset
 public:
 	explicit bitset(size_t size = 0);
 	bitset(bitset const & other) = delete;
-	auto operator =(bitset const & other) -> bitset & = delete;
+	auto operator =(bitset const & other)->bitset & = delete;
 	bitset(bitset && other) = delete;
-	auto operator =(bitset && other) -> bitset & = delete;;
+	auto operator =(bitset && other)->bitset & = delete;;
 	~bitset();
 	auto test(size_t index) const throw(std::out_of_range) -> bool;
 	auto set(size_t index) throw(std::out_of_range) -> void;
 	auto reset(size_t index) throw(std::out_of_range) -> void;
-	auto size() const noexcept -> size_t;
+	auto size() const noexcept->size_t;
 	auto swap(bitset & other)  noexcept -> void;
 private:
 	size_t size_;
@@ -33,16 +37,16 @@ public:
 	explicit allocator(size_t size = 0);
 	allocator(allocator const & other);
 	~allocator();
-	auto operator =(allocator const &) -> allocator & = delete;
+	auto operator =(allocator const &)->allocator & = delete;
 	auto swap(allocator & other) -> void;
 	auto resize() -> void;
 	auto construct(T * ptr, T const & value) throw(std::out_of_range) -> void;
 	auto destroy(T * ptr) throw(std::out_of_range) -> void;
 	auto destroy(T * first, T * last) -> void;
-	auto get() noexcept -> T *;
-	auto get() const noexcept -> T const *;
-	auto count() const noexcept -> size_t;
-	auto size() const noexcept -> size_t;
+	auto get() noexcept->T *;
+	auto get() const noexcept->T const *;
+	auto count() const noexcept->size_t;
+	auto size() const noexcept->size_t;
 	auto full() const noexcept -> bool;
 	auto empty() const noexcept -> bool;
 	auto test(size_t index) const -> bool;
@@ -63,12 +67,12 @@ public:
 	explicit stack(size_t size = 0); /*noexcept*/
 	stack(stack const & st); /*strong*/
 	~stack(); /*noexcept*/
-	auto count() const noexcept -> size_t; /*noexcept*/
+	auto count() const noexcept->size_t; /*noexcept*/
 	auto empty() const noexcept -> bool; /*noexcept*/
 	auto push(T const & el) -> void; /*strong*/
-	auto operator = (stack const & st) -> stack &; /*strong*/
-	auto pop() throw(std::logic_error) -> void; /*strong*/
-	auto top() const throw(std::logic_error) -> T const &; /*strong*/
+	auto operator = (stack const & st)->stack &; /*strong*/
+	auto pop() throw(std::logic_error) -> const std::shared_ptr<T>; /*strong*/
+	//auto top() const throw(std::logic_error)->T const &; /*strong*/
 private:
 	allocator<T> al_;
 	mutable std::mutex m_;
@@ -76,7 +80,7 @@ private:
 
 //--------------------------------------------------------------------------------------------------------------------------------------
 
-bitset::bitset(size_t s) : size_(s), 
+bitset::bitset(size_t s) : size_(s),
 bit_(s != 0 ? new bool[s] : nullptr) {
 	for (size_t t = 0; t < s; ++t) {
 		bit_[t] = 0;
@@ -84,9 +88,9 @@ bit_(s != 0 ? new bool[s] : nullptr) {
 }
 
 /*bitset::bitset(bitset const & other) : bitset(other.size()) {
-	for (size_t t = 0; t < size_; ++t) {
-		bit_[t] = other.bit_[t];
-	}
+for (size_t t = 0; t < size_; ++t) {
+bit_[t] = other.bit_[t];
+}
 }*/
 
 bitset::~bitset() { delete[] bit_; }
@@ -112,7 +116,7 @@ auto bitset::reset(size_t index) throw(std::out_of_range) -> void {
 	}
 }
 
-auto bitset::size() const noexcept -> size_t {return size_; }
+auto bitset::size() const noexcept -> size_t { return size_; }
 
 auto bitset::swap(bitset& other) noexcept -> void {
 	std::swap(size_, other.size_);
@@ -135,13 +139,13 @@ allocator<T>::allocator(allocator const & other) : allocator(other.size()) {
 }
 
 template<typename T>
-allocator<T>::~allocator() { 
+allocator<T>::~allocator() {
 	if (count_ > 0) {
 		this->destroy(ptr_, ptr_ + size_);
 	}
 	operator delete(ptr_);
 }
-	
+
 
 template <typename T>
 auto allocator<T>::resize() -> void {
@@ -231,13 +235,13 @@ stack<T>::~stack() { /*al_.destroy(al_.get(), al_.get() + al_.count());*/ }
 template <typename T>
 auto stack<T>::empty() const noexcept -> bool {
 	std::lock_guard<std::mutex> lock(m_);
-	return (al_.count() == 0); 
+	return (al_.count() == 0);
 }
 
 template <typename T>
-auto stack<T>::count() const noexcept -> size_t { 
+auto stack<T>::count() const noexcept -> size_t {
 	std::lock_guard<std::mutex> lock(m_);
-	return al_.count(); 
+	return al_.count();
 }
 
 template <typename T>
@@ -256,12 +260,23 @@ auto stack<T>::operator = (stack const & st) -> stack & {
 		std::lock_guard<std::mutex> lock_a(m_, std::adopt_lock);
 		std::lock_guard<std::mutex> lock_b(st.m_, std::adopt_lock);
 		(allocator<T>(st.al_)).swap(al_);
-		
+
 	}
 	return *this;
 }
 
 template <typename T>
+auto stack<T>::pop() throw(std::logic_error) -> const std::shared_ptr<T> {
+	std::lock_guard<std::mutex> lock(m_);
+	if (al_.empty()) std::logic_error("In pop");
+	else {
+		const std::shared_ptr<T> top_(std::make_shared<T>(al_.get()[al_.count() - 1]));
+		al_.destroy(al_.get() + al_.count() - 1);
+		return top_;
+	}
+}
+
+/*template <typename T>
 auto stack<T>::pop() throw(std::logic_error) -> void {
 	std::lock_guard<std::mutex> lock(m_);
 	if (al_.empty()) std::logic_error("In pop");
@@ -277,4 +292,4 @@ auto stack<T>::top() const throw(std::logic_error) -> T const & {
 	else {
 		return al_.get()[al_.count() - 1];
 	}
-}
+}*/
