@@ -71,7 +71,7 @@ public:
 	auto empty() const noexcept -> bool; /*noexcept*/
 	auto push(T const & el) -> void; /*strong*/
 	auto operator = (stack const & st)->stack &; /*strong*/
-	auto pop() throw(std::logic_error) -> const std::shared_ptr<T>; /*strong*/
+	auto pop() throw(std::logic_error) -> std::shared_ptr<T>; /*strong*/
 	//auto top() const throw(std::logic_error)->T const &; /*strong*/
 private:
 	allocator<T> al_;
