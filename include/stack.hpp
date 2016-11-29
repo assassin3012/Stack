@@ -265,11 +265,11 @@ auto stack<T>::operator = (stack const & st) -> stack & {
 }
 
 template <typename T>
-auto stack<T>::pop() throw(std::logic_error) -> const std::shared_ptr<T> {
+auto stack<T>::pop() throw(std::logic_error) -> std::shared_ptr<T> {
 	std::lock_guard<std::mutex> lock(m_);
 	if (al_.empty()) std::logic_error("In pop");
 	else {
-		const std::shared_ptr<T> top_(std::make_shared<T>(al_.get()[al_.count() - 1]));
+	std::shared_ptr<T> top_(std::make_shared<T>(al_.get()[al_.count() - 1]));
 		al_.destroy(al_.get() + al_.count() - 1);
 		return top_;
 	}
